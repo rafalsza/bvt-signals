@@ -15,6 +15,7 @@ from binance.client import Client
 import numpy as np
 import threading
 import os
+import logging
 import pandas_ta as pta
 import pandas as pd
 from datetime import date, datetime, timedelta
@@ -26,7 +27,7 @@ DEBUG = False  # List analysis result to console
 TICKERS = 'tickers_all.txt'  # 'signalsample.txt'
 SIGNAL_NAME = 'os_signalbuys_3st'
 SIGNAL_FILE_BUY = 'signals/' + SIGNAL_NAME + '.buy'
-
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
 # for colourful logging to the console
 class txcolors:
@@ -41,7 +42,7 @@ class txcolors:
 def get_symbols():
     response = client.get_ticker()
     PAIRS_WITH = 'USDT'
-    ignore = ['UP', 'DOWN', 'AGLD', 'AUD', 'BRL', 'BUSD', 'BVND', 'BCC', 'CVP', 'BCHABC', 'BCHSV', 'BEAR', 'BNBBEAR', 'BNBBULL',
+    ignore = ['UP', 'DOWN', 'AGLD', 'AUD', 'BRL','BETA', 'BUSD', 'BVND', 'BCC', 'CVP', 'BCHABC', 'BCHSV', 'BEAR', 'BNBBEAR', 'BNBBULL',
               'BULL', 'BKRW', 'DAI', 'ERD', 'EUR', 'FRONT', 'USDS', 'HC', 'LEND', 'MCO', 'GBP', 'RUB',
               'TRY', 'NPXS', 'PAX', 'STORM', 'VEN', 'UAH', 'NGN', 'VAI', 'STRAT','SUSD', 'XZC', 'RAD']
     symbols = []
@@ -145,3 +146,5 @@ def do_work():
             continue
         except KeyboardInterrupt as ki:
             continue
+
+do_work()
