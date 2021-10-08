@@ -87,10 +87,10 @@ def tripple_st(filtered_pairs3):
                  or (sup2.iat[-1] < df.close.iat[-1] and sup3.iat[-1] < df.close.iat[-1])):
         print(f'{symbol}\n'
               f' EMA 550:{ema.iat[-1]}\n'
-              f'ST 1: {sup1.iat[-1]}'
+              f' ST 1: {sup1.iat[-1]}'
               f',ST 2: {sup2.iat[-1]}'
               f',ST 3: {sup3.iat[-1]}\n'
-              f'stochrsi_k:{stoch_rsi_k.iat[-1]}\n'
+              f' stochrsi_k:{stoch_rsi_k.iat[-1]}\n'
               f' | CLOSE: {df.close.iat[-1]}')
         selected_pair.append(symbol)
 
@@ -146,5 +146,3 @@ def do_work():
             continue
         except KeyboardInterrupt as ki:
             continue
-
-do_work()
