@@ -41,7 +41,7 @@ class txcolors:
 def get_symbols():
     response = client.get_ticker()
     PAIRS_WITH = 'USDT'
-    ignore = ['UP', 'DOWN', 'AGLD', 'AUD', 'BRL', 'BVND', 'BCC', 'CVP', 'BCHABC', 'BCHSV', 'BEAR', 'BNBBEAR', 'BNBBULL',
+    ignore = ['UP', 'DOWN', 'AGLD', 'AUD', 'BRL', 'BUSD', 'BVND', 'BCC', 'CVP', 'BCHABC', 'BCHSV', 'BEAR', 'BNBBEAR', 'BNBBULL',
               'BULL', 'BKRW', 'DAI', 'ERD', 'EUR', 'FRONT', 'USDS', 'HC', 'LEND', 'MCO', 'GBP', 'RUB',
               'TRY', 'NPXS', 'PAX', 'STORM', 'VEN', 'UAH', 'NGN', 'VAI', 'STRAT','SUSD', 'XZC', 'RAD']
     symbols = []
