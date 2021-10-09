@@ -146,5 +146,3 @@ def do_work():
             continue
         except KeyboardInterrupt as ki:
             continue
-
-do_work()
