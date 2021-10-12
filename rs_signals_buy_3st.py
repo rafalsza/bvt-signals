@@ -44,7 +44,7 @@ def get_symbols():
     PAIRS_WITH = 'USDT'
     ignore = ['UP', 'DOWN', 'AGLD', 'AUD', 'BRL','BETA', 'BUSD', 'BVND', 'BCC', 'CVP', 'BCHABC', 'BCHSV', 'BEAR', 'BNBBEAR', 'BNBBULL',
               'BULL', 'BKRW', 'DAI', 'ERD', 'EUR', 'FRONT', 'USDS', 'HC', 'LEND', 'MCO', 'GBP', 'RUB',
-              'TRY', 'NPXS', 'PAX', 'STORM', 'VEN', 'UAH', 'USDC', 'NGN', 'VAI', 'STRAT', 'SUSD', 'XZC', 'RAD']
+              'TRY', 'NPXS', 'PAX', 'STORM', 'VEN', 'UAH', 'USDC', 'NGN','RARE', 'VAI', 'STRAT', 'SUSD', 'XZC', 'RAD']
     symbols = []
 
     for symbol in response:
