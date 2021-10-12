@@ -24,7 +24,7 @@ import time
 client = Client("", "")
 TIME_TO_WAIT = 3  # Minutes to wait between analysis
 DEBUG = False  # List analysis result to console
-TICKERS = 'tickers_all.txt'  # 'signalsample.txt'
+TICKERS = 'tickers_all.txt'
 SIGNAL_NAME = 'os_signalbuys_3st'
 SIGNAL_FILE_BUY = 'signals/' + SIGNAL_NAME + '.buy'
 # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
@@ -44,7 +44,7 @@ def get_symbols():
     PAIRS_WITH = 'USDT'
     ignore = ['UP', 'DOWN', 'AGLD', 'AUD', 'BRL','BETA', 'BUSD', 'BVND', 'BCC', 'CVP', 'BCHABC', 'BCHSV', 'BEAR', 'BNBBEAR', 'BNBBULL',
               'BULL', 'BKRW', 'DAI', 'ERD', 'EUR', 'FRONT', 'USDS', 'HC', 'LEND', 'MCO', 'GBP', 'RUB',
-              'TRY', 'NPXS', 'PAX', 'STORM', 'VEN', 'UAH', 'USDC', 'NGN','RARE', 'VAI', 'STRAT', 'SUSD', 'XZC', 'RAD']
+              'TRY', 'NPXS', 'PAX', 'STORM','RARE', 'VEN', 'UAH', 'USDC','USDP', 'NGN', 'VAI', 'STRAT', 'SUSD', 'XZC', 'RAD']
     symbols = []
 
     for symbol in response:
