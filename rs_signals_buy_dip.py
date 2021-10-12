@@ -199,7 +199,7 @@ def analyze(trading_pairs):
 
     for i in filtered_pairs1:
         output = filter2(i)
-        print(output)
+        # print(output)
 
     for i in filtered_pairs2:
         output = filter3(i)
