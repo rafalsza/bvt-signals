@@ -129,10 +129,10 @@ def do_work():
             signal_coins = {}
             pairs = {}
             # uncomment line 130,131 if you want use some .txt list from TICKERS
-            # with open(TICKERS) as f:
-            #     pairs = f.read()
+            with open(TICKERS) as f:
+                pairs = f.read().splitlines()
 
-            pairs = get_symbols()
+            # pairs = get_symbols()
 
             if not threading.main_thread().is_alive(): exit()
             print(f'{SIGNAL_NAME}: Analyzing {len(pairs)} coins')

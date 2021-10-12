@@ -233,7 +233,7 @@ def do_work():
             signal_coins = {}
             pairs = {}
             with open(TICKERS) as f:
-                pairs = f.read()
+                pairs = f.read().splitlines()
 
             # pairs = get_symbols()
 
