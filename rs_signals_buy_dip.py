@@ -11,10 +11,9 @@ from datetime import date, datetime, timedelta
 import time
 
 client = Client("", "")
-ver = client.get_ticker()
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
-DEBUG = False  # List analysis result to console
-TICKERS = 'tickers_all.txt'  # 'signalsample.txt'
+DEBUG = False
+TICKERS = 'tickers_all.txt'
 SIGNAL_NAME = 'os_signalbuys_dip'
 SIGNAL_FILE_BUY = 'signals/' + SIGNAL_NAME + '.buy'
 
@@ -170,12 +169,22 @@ def momentum(filtered_pairs3):
     df.columns = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
     df = df.set_index('timestamp')
     df.index = pd.to_datetime(df.index, unit='ms')
-    print("on 1m timeframe " + symbol)
-    
-    real = pta.cmo(df.close, talib=False)
-    print(real.iat[-1])
 
-    if real.iat[-1] < -50:
+    real = pta.cmo(df.close, talib=False)  # cmo
+    # WaveTrend
+    n1 = 10
+    n2 = 21
+    ap = pta.hlc3(df.high, df.low, df.close)
+    esa = pta.ema(ap, n1)
+    d = pta.ema(abs(ap - esa), n1)
+    ci = (ap - esa) / (0.015 * d)
+    wt1 = pta.ema(ci, n2)
+    #
+    print("on 1m timeframe " + symbol)
+    print(f'cmo: {real.iat[-1]}')
+    print(f'wt1: {wt1.iat[-1]}')
+
+    if real.iat[-1] < -50 and wt1.iat[-1] < -60:
         print('oversold dip found')
         selected_pair.append(symbol)
         selected_pairCMO.append(real.iat[-1])
@@ -241,7 +250,8 @@ def do_work():
             print(f'{SIGNAL_NAME}: Analyzing {len(pairs)} coins')
             signal_coins = analyze(pairs)
             print(
-                f'{SIGNAL_NAME}: {len(signal_coins)} coins with Buy Signals. Waiting {TIME_TO_WAIT} minutes for next analysis.')
+                f'{SIGNAL_NAME}: {len(signal_coins)} '
+                f'coins with Buy Signals. Waiting {TIME_TO_WAIT} minutes for next analysis.')
 
             time.sleep((TIME_TO_WAIT * 60))
         except Exception as e:
