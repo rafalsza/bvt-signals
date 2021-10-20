@@ -31,7 +31,8 @@ class txcolors:
 def get_symbols():
     response = client.get_ticker()
     PAIRS_WITH = 'USDT'
-    ignore = ['UP', 'DOWN', 'AUD', 'BRL', 'BVND','BUSD', 'BCC', 'BCHABC', 'BCHSV', 'BEAR', 'BNBBEAR', 'BNBBULL', 'BULL',
+    ignore = ['UP', 'DOWN', 'AUD', 'BRL', 'BVND', 'BUSD', 'BCC', 'BCHABC', 'BCHSV', 'BEAR', 'BNBBEAR', 'BNBBULL',
+              'BULL',
               'BKRW', 'DAI', 'ERD', 'EUR', 'USDS', 'HC', 'LEND', 'MCO', 'GBP', 'RUB', 'TRY', 'NPXS', 'PAX', 'STORM',
               'VEN', 'UAH', 'USDC', 'NGN', 'VAI', 'STRAT', 'SUSD', 'XZC', 'RAD']
     symbols = []
@@ -127,16 +128,24 @@ def filter3(filtered_pairs2):
     open_time = [int(entry[0]) for entry in klines]
     close = [float(entry[4]) for entry in klines]
     close_array = np.asarray(close)
-    print("on 5m timeframe " + symbol)
+    close_series = pd.Series(close)
+    # print("on 5m timeframe " + symbol)
 
     # min = ta.MIN(close_array, timeperiod=30)
     # max = ta.MAX(close_array, timeperiod=30)
+
+    # max = close_series.rolling(30, min_periods=1).max()
+    # min = close_series.rolling(30, min_periods=1).min()
 
     # real = ta.HT_TRENDLINE(close_array)
     # wcl = ta.WCLPRICE(max, min, close_array)
 
     # print(min[-1])
     # print(max[-1])
+
+    # print(min.iat[-1])
+    # print(max.iat[-1])
+
     # print(real[-1])
 
     x = close
@@ -146,8 +155,11 @@ def filter3(filtered_pairs2):
     best_fit_line2 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 1.01
     best_fit_line3 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 0.99
 
-    if x[-1] < best_fit_line1[-1]:
-        print('oversold dip found')
+    # if x[-1] < best_fit_line1[-1]:
+    #     print('oversold dip found')
+    #     filtered_pairs3.append(symbol)
+    
+    if x[-1] < best_fit_line3[-1] and best_fit_line1[0] < best_fit_line1[-1]:
         filtered_pairs3.append(symbol)
 
     return filtered_pairs3
@@ -161,6 +173,7 @@ def momentum(filtered_pairs3):
     # close = [float(entry[4]) for entry in klines]
     # close_array = pd.Series(close)
     # real = pta.cmo(close_array, talib=False)
+
     start_str = '12 hours ago UTC'
     end_str = f'{datetime.now()}'
     # print(f"Fetching new bars for {datetime.now().isoformat()}")
@@ -169,8 +182,8 @@ def momentum(filtered_pairs3):
     df.columns = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
     df = df.set_index('timestamp')
     df.index = pd.to_datetime(df.index, unit='ms')
-
-    real = pta.cmo(df.close, talib=False)  # cmo
+    # CMO
+    real = pta.cmo(df.close, talib=False)
     # WaveTrend
     n1 = 10
     n2 = 21
@@ -212,7 +225,7 @@ def analyze(trading_pairs):
 
     for i in filtered_pairs2:
         output = filter3(i)
-        print(output)
+        # print(output)
 
     for i in filtered_pairs3:
         output = momentum(i)
