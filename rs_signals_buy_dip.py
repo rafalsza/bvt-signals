@@ -158,7 +158,7 @@ def filter3(filtered_pairs2):
     # if x[-1] < best_fit_line1[-1]:
     #     print('oversold dip found')
     #     filtered_pairs3.append(symbol)
-    
+
     if x[-1] < best_fit_line3[-1] and best_fit_line1[0] < best_fit_line1[-1]:
         filtered_pairs3.append(symbol)
 
