@@ -1,10 +1,11 @@
 # bvt-signals
-bvt bot buy signals
+---
+bvt bot buy signals<br />
 recommended settings
 
 config.yml
 
-
+```
 CUSTOM_LIST: False
 TIME_DIFFERENCE: 1
 RECHECK_INTERVAL: 3
@@ -17,3 +18,4 @@ TRAILING_TAKE_PROFIT: .1
 TICKERS_LIST: 'tickers_all.txt'
 SIGNALLING_MODULES:
 - rs_signals_buy_dip
+```
