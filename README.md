@@ -1,6 +1,9 @@
 # bvt-signals
 ---
 bvt bot buy signals<br />
+
+rs_signals_buy_dip.py  =  polynomial regression on 1h,15m,5m + ( cmo < -50 and wavetrend < -60 ) on 1m
+
 recommended settings
 
 config.yml
