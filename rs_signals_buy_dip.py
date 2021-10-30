@@ -60,6 +60,9 @@ def filter1(pair):
     open_time = [int(entry[0]) for entry in klines]
     close = [float(entry[4]) for entry in klines]
     close_array = np.asarray(close)
+    close_series = pd.Series(close)
+
+    real = pta.cmo(close_series, talib=False)
 
     x = close
     y = range(len(x))
@@ -68,7 +71,7 @@ def filter1(pair):
     best_fit_line2 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 1.01
     best_fit_line3 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 0.99
 
-    if x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
+    if real.iat[-1] < -50 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
         filtered_pairs1.append(symbol)
 
         # plt.figure(figsize=(8,6))
@@ -81,7 +84,7 @@ def filter1(pair):
         # plt.pause(6)
         # plt.close()
 
-    elif x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
+    elif real.iat[-1] < -50 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
         filtered_pairs1.append(symbol)
 
         # plt.figure(figsize=(8,6))
