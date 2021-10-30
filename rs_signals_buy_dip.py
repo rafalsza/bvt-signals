@@ -9,6 +9,7 @@ import pandas_ta as pta
 import pandas as pd
 from datetime import date, datetime, timedelta
 import time
+import matplotlib.pyplot as plt
 
 client = Client("", "")
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
@@ -77,6 +78,7 @@ def filter1(pair):
         # plt.figure(figsize=(8,6))
         # plt.grid(True)
         # plt.plot(x)
+        # plt.title(label=f'{symbol}', color="green")
         # plt.plot(best_fit_line1, '--', color='r')
         # plt.plot(best_fit_line2, '--', color='r')
         # plt.plot(best_fit_line3, '--', color='r')
@@ -90,6 +92,7 @@ def filter1(pair):
         # plt.figure(figsize=(8,6))
         # plt.grid(True)
         # plt.plot(x)
+        # plt.title(label=f'{symbol}', color="green")
         # plt.plot(best_fit_line1, '--', color='r')
         # plt.plot(best_fit_line2, '--', color='r')
         # plt.plot(best_fit_line3, '--', color='r')
