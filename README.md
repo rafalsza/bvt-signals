@@ -2,7 +2,7 @@
 ---
 bvt bot buy signals<br />
 
-rs_signals_buy_dip.py  =  linear regression on 1h (+ cmo < -50) ,15m,5m,1m ( cmo < -50 and wavetrend < -60 )
+rs_signals_buy_dip.py  =  linear regression on 1h (+ cmo < -60) ,15m,5m,1m ( cmo < -50 and wavetrend < -60 )
 
 recommended settings
 
