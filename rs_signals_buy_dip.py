@@ -72,7 +72,7 @@ def filter1(pair):
     best_fit_line2 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 1.01
     best_fit_line3 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 0.99
 
-    if real.iat[-1] < -50 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
+    if real.iat[-1] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
         filtered_pairs1.append(symbol)
 
         # plt.figure(figsize=(8,6))
@@ -86,7 +86,7 @@ def filter1(pair):
         # plt.pause(6)
         # plt.close()
 
-    elif real.iat[-1] < -50 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
+    elif real.iat[-1] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
         filtered_pairs1.append(symbol)
 
         # plt.figure(figsize=(8,6))
