@@ -22,3 +22,10 @@ TICKERS_LIST: 'tickers_all.txt'
 SIGNALLING_MODULES:
 - rs_signals_buy_dip
 ```
+
+rs_signals_buy_dip.py
+```
+CMO_1h = True
+WAVETREND_1h = False
+MACD_1h = False
+```
