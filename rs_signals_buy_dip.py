@@ -15,8 +15,12 @@ client = Client("", "")
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
 DEBUG = False
 TICKERS = 'tickers_all.txt'
-SIGNAL_NAME = 'os_signalbuys_dip'
+SIGNAL_NAME = 'rs_signals_buy_dip'
 SIGNAL_FILE_BUY = 'signals/' + SIGNAL_NAME + '.buy'
+
+CMO_1h = True
+WAVETREND_1h = False
+MACD_1h = False
 
 
 # for colourful logging to the console
@@ -60,10 +64,23 @@ def filter1(pair):
     klines = client.get_klines(symbol=symbol, interval=interval)
     open_time = [int(entry[0]) for entry in klines]
     close = [float(entry[4]) for entry in klines]
+    low = [float(entry[3]) for entry in klines]
+    high = [float(entry[2]) for entry in klines]
+    open = [float(entry[1]) for entry in klines]
     close_array = np.asarray(close)
     close_series = pd.Series(close)
+    high_series = pd.Series(high)
+    low_series = pd.Series(low)
 
-    real = pta.cmo(close_series, talib=False)
+    n1 = 10
+    n2 = 21
+    ap = pta.hlc3(high_series, low_series, close_series)
+    esa = pta.ema(ap, n1)
+    d = pta.ema(abs(ap - esa), n1)
+    ci = (ap - esa) / (0.015 * d)
+    wt1 = pta.ema(ci, n2)
+    cmo = pta.cmo(close_series, talib=False)
+    macdh = pta.macd(close_series)['MACDh_12_26_9']
 
     x = close
     y = range(len(x))
@@ -72,33 +89,103 @@ def filter1(pair):
     best_fit_line2 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 1.01
     best_fit_line3 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 0.99
 
-    if real.iat[-1] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
-        filtered_pairs1.append(symbol)
+    if CMO_1h and not WAVETREND_1h and not MACD_1h:
+        if cmo.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'cmo: {cmo.iat[-2]}')
 
-        # plt.figure(figsize=(8,6))
-        # plt.grid(True)
-        # plt.plot(x)
-        # plt.title(label=f'{symbol}', color="green")
-        # plt.plot(best_fit_line1, '--', color='r')
-        # plt.plot(best_fit_line2, '--', color='r')
-        # plt.plot(best_fit_line3, '--', color='r')
-        # plt.show(block=False)
-        # plt.pause(6)
-        # plt.close()
+            # plt.figure(figsize=(8, 6))
+            # plt.grid(True)
+            # plt.plot(x)
+            # plt.title(label=f'{symbol}', color="green")
+            # plt.plot(best_fit_line1, '--', color='r')
+            # plt.plot(best_fit_line2, '--', color='r')
+            # plt.plot(best_fit_line3, '--', color='green')
+            # plt.show(block=False)
+            # plt.pause(6)
+            # plt.close()
 
-    elif real.iat[-1] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
-        filtered_pairs1.append(symbol)
+        elif cmo.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'cmo: {cmo.iat[-1]}')
 
-        # plt.figure(figsize=(8,6))
-        # plt.grid(True)
-        # plt.plot(x)
-        # plt.title(label=f'{symbol}', color="green")
-        # plt.plot(best_fit_line1, '--', color='r')
-        # plt.plot(best_fit_line2, '--', color='r')
-        # plt.plot(best_fit_line3, '--', color='r')
-        # plt.show(block=False)
-        # plt.pause(6)
-        # plt.close()
+            # plt.figure(figsize=(8, 6))
+            # plt.grid(True)
+            # plt.plot(x)
+            # plt.title(label=f'{symbol}', color="green")
+            # plt.plot(best_fit_line1, '--', color='r')
+            # plt.plot(best_fit_line2, '--', color='r')
+            # plt.plot(best_fit_line3, '--', color='green')
+            # plt.show(block=False)
+            # plt.pause(6)
+            # plt.close()
+
+    if CMO_1h and WAVETREND_1h and not MACD_1h:
+        if cmo.iat[-2] < -60 and wt1.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= \
+                best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'cmo: {cmo.iat[-2]}')
+                print(f'wt1: {wt1.iat[-2]}')
+
+        elif cmo.iat[-2] < -60 and wt1.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= \
+                best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'cmo: {cmo.iat[-1]}')
+                print(f'wt1: {wt1.iat[-1]}')
+
+    if CMO_1h and WAVETREND_1h and MACD_1h:
+        if cmo.iat[-2] < -60 and wt1.iat[-2] < -60 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and \
+                best_fit_line1[0] <= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'cmo: {cmo.iat[-2]}')
+                print(f'wt1: {wt1.iat[-2]}')
+                print(f'macdh: {macdh.iat[-2]}')
+
+        elif cmo.iat[-2] < -60 and wt1.iat[-2] < -60 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and \
+                best_fit_line1[0] >= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'cmo: {cmo.iat[-2]}')
+                print(f'wt1: {wt1.iat[-2]}')
+                print(f'macdh: {macdh.iat[-2]}')
+
+    if WAVETREND_1h and not CMO_1h and not MACD_1h:
+        if wt1.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'wt1: {wt1.iat[-2]}')
+
+        elif wt1.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'wt1: {wt1.iat[-2]}')
+
+    else:
+        if x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+        elif x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
 
     return filtered_pairs1
 
