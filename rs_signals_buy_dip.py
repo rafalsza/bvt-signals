@@ -7,13 +7,13 @@ import threading
 import os
 import pandas_ta as pta
 import pandas as pd
-from datetime import date, datetime, timedelta
+from datetime import datetime
 import time
 import matplotlib.pyplot as plt
 
 client = Client("", "")
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
-DEBUG = False
+DEBUG = True
 TICKERS = 'tickers_all.txt'
 SIGNAL_NAME = 'rs_signals_buy_dip'
 SIGNAL_FILE_BUY = 'signals/' + SIGNAL_NAME + '.buy'
@@ -89,7 +89,7 @@ def filter1(pair):
     best_fit_line2 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 1.01
     best_fit_line3 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 0.99
 
-    if CMO_1h and not WAVETREND_1h and not MACD_1h:
+    if CMO_1h and not WAVETREND_1h and not MACD_1h:  # cmo=true,wavetrend=false,macdh=false
         if cmo.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
             if DEBUG:
@@ -126,7 +126,7 @@ def filter1(pair):
             # plt.pause(6)
             # plt.close()
 
-    if CMO_1h and WAVETREND_1h and not MACD_1h:
+    if CMO_1h and WAVETREND_1h and not MACD_1h:  # cmo=true,wavetrend=true,macd=false
         if cmo.iat[-2] < -60 and wt1.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= \
                 best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
@@ -145,7 +145,7 @@ def filter1(pair):
                 print(f'cmo: {cmo.iat[-1]}')
                 print(f'wt1: {wt1.iat[-1]}')
 
-    if CMO_1h and WAVETREND_1h and MACD_1h:
+    if CMO_1h and WAVETREND_1h and MACD_1h:  # cmo=true,wavetrend=true,macdh=true
         if cmo.iat[-2] < -60 and wt1.iat[-2] < -60 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and \
                 best_fit_line1[0] <= best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
@@ -166,7 +166,7 @@ def filter1(pair):
                 print(f'wt1: {wt1.iat[-2]}')
                 print(f'macdh: {macdh.iat[-2]}')
 
-    if WAVETREND_1h and not CMO_1h and not MACD_1h:
+    if WAVETREND_1h and not CMO_1h and not MACD_1h:  # cmo=false,wavetrend=true,macdh=false
         if wt1.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
             if DEBUG:
@@ -175,6 +175,21 @@ def filter1(pair):
                 print(f'wt1: {wt1.iat[-2]}')
 
         elif wt1.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'wt1: {wt1.iat[-2]}')
+
+    if WAVETREND_1h and not CMO_1h and not MACD_1h:  # cmo=true,wavetrend=false,macdh=true
+        if cmo.iat[-2] < -60 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'wt1: {wt1.iat[-2]}')
+
+        elif cmo.iat[-2] < -60 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
