@@ -373,7 +373,6 @@ def analyze(trading_pairs):
 
 
 def do_work():
-    global CMO_1h
     while True:
         try:
             if not os.path.exists(TICKERS):
