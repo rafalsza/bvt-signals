@@ -181,7 +181,7 @@ def filter1(pair):
                 print("on 1h timeframe " + symbol)
                 print(f'wt1: {wt1.iat[-2]}')
 
-    if WAVETREND_1h and not CMO_1h and not MACD_1h:  # cmo=true,wavetrend=false,macdh=true
+    if CMO_1h and not WAVETREND_1h and MACD_1h:  # cmo=true,wavetrend=false,macdh=true
         if cmo.iat[-2] < -60 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
             if DEBUG:
