@@ -212,7 +212,8 @@ def filter1(pair):
                 print('found')
                 print("on 1h timeframe " + symbol)
                 print(f'macdh: {macdh.iat[-2]}')
-    else:
+
+    if not CMO_1h and not WAVETREND_1h and not MACD_1h:
         if x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
         elif x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
@@ -345,11 +346,13 @@ def analyze(trading_pairs):
 
     for i in filtered_pairs1:
         output = filter2(i)
-        # print(output)
+        if DEBUG:
+            print(output)
 
     for i in filtered_pairs2:
         output = filter3(i)
-        # print(output)
+        if DEBUG:
+            print(output)
 
     for i in filtered_pairs3:
         output = momentum(i)
