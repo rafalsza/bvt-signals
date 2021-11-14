@@ -373,6 +373,7 @@ def analyze(trading_pairs):
 
 
 def do_work():
+    global CMO_1h
     while True:
         try:
             if not os.path.exists(TICKERS):
@@ -386,8 +387,10 @@ def do_work():
 
             # pairs = get_symbols()
 
-            if not threading.main_thread().is_alive(): exit()
+            if not threading.main_thread().is_alive():
+                exit()
             print(f'{SIGNAL_NAME}: Analyzing {len(pairs)} coins')
+            print(f'CMO_1h: {CMO_1h} | WAVETREND_1h: {WAVETREND_1h} | MACD_1h: {MACD_1h}')
             signal_coins = analyze(pairs)
             print(
                 f'{SIGNAL_NAME}: {len(signal_coins)} '
