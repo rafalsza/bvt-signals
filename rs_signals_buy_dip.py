@@ -20,7 +20,7 @@ SIGNAL_FILE_BUY = 'signals/' + SIGNAL_NAME + '.buy'
 
 CMO_1h = True
 WAVETREND_1h = False
-MACD_1h = False
+MACD_1h = True
 
 
 # for colourful logging to the console
@@ -187,15 +187,31 @@ def filter1(pair):
             if DEBUG:
                 print('found')
                 print("on 1h timeframe " + symbol)
-                print(f'wt1: {wt1.iat[-2]}')
+                print(f'cmo: {cmo.iat[-2]}')
+                print(f'macdh: {macdh.iat[-2]}')
 
         elif cmo.iat[-2] < -60 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
                 print("on 1h timeframe " + symbol)
-                print(f'wt1: {wt1.iat[-2]}')
+                print(f'cmo: {wt1.iat[-2]}')
+                print(f'macdh: {macdh.iat[-2]}')
 
+    if not CMO_1h and not WAVETREND_1h and MACD_1h:  # cmo=false,wavetrend=false,macdh=true
+        if macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'macdh: {macdh.iat[-2]}')
+
+        elif macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
+            filtered_pairs1.append(symbol)
+            if DEBUG:
+                print('found')
+                print("on 1h timeframe " + symbol)
+                print(f'macdh: {macdh.iat[-2]}')
     else:
         if x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
