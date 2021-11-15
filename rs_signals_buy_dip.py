@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 client = Client("", "")
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
-DEBUG = True
+DEBUG = False
 TICKERS = 'tickers_all.txt'
 SIGNAL_NAME = 'rs_signals_buy_dip'
 SIGNAL_FILE_BUY = 'signals/' + SIGNAL_NAME + '.buy'
@@ -182,7 +182,8 @@ def filter1(pair):
                 print(f'wt1: {wt1.iat[-2]}')
 
     if CMO_1h and not WAVETREND_1h and MACD_1h:  # cmo=true,wavetrend=false,macdh=true
-        if cmo.iat[-2] < -40 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
+        if cmo.iat[-2] < -40 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= \
+                best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -190,7 +191,8 @@ def filter1(pair):
                 print(f'cmo: {cmo.iat[-2]}')
                 print(f'macdh: {macdh.iat[-2]}')
 
-        elif cmo.iat[-2] < -40 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
+        elif cmo.iat[-2] < -40 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= \
+                best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -229,7 +231,6 @@ def filter2(filtered_pairs1):
     open_time = [int(entry[0]) for entry in klines]
     close = [float(entry[4]) for entry in klines]
     close_array = np.asarray(close)
-
 
     x = close
     y = range(len(x))
@@ -285,6 +286,11 @@ def filter3(filtered_pairs2):
     best_fit_line3 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 0.99
 
     if x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
+        filtered_pairs3.append(symbol)
+        if DEBUG:
+            print("on 5min timeframe " + symbol)
+
+    elif x[-1] < best_fit_line3[-1] and best_fit_line1[0] < best_fit_line1[-1]:
         filtered_pairs3.append(symbol)
         if DEBUG:
             print("on 5min timeframe " + symbol)
