@@ -19,8 +19,8 @@ SIGNAL_NAME = 'rs_signals_buy_dip'
 SIGNAL_FILE_BUY = 'signals/' + SIGNAL_NAME + '.buy'
 
 CMO_1h = True
-WAVETREND_1h = False
-MACD_1h = True
+WAVETREND_1h = True
+MACD_1h = False
 
 
 # for colourful logging to the console
@@ -182,7 +182,7 @@ def filter1(pair):
                 print(f'wt1: {wt1.iat[-2]}')
 
     if CMO_1h and not WAVETREND_1h and MACD_1h:  # cmo=true,wavetrend=false,macdh=true
-        if cmo.iat[-2] < -60 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
+        if cmo.iat[-2] < -40 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -190,7 +190,7 @@ def filter1(pair):
                 print(f'cmo: {cmo.iat[-2]}')
                 print(f'macdh: {macdh.iat[-2]}')
 
-        elif cmo.iat[-2] < -60 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
+        elif cmo.iat[-2] < -40 and macdh.iat[-2] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -230,6 +230,7 @@ def filter2(filtered_pairs1):
     close = [float(entry[4]) for entry in klines]
     close_array = np.asarray(close)
 
+
     x = close
     y = range(len(x))
 
@@ -239,9 +240,13 @@ def filter2(filtered_pairs1):
 
     if x[-1] < best_fit_line3[-1] and best_fit_line1[0] < best_fit_line1[-1]:
         filtered_pairs2.append(symbol)
+        if DEBUG:
+            print("on 15min timeframe " + symbol)
 
     if x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
         filtered_pairs2.append(symbol)
+        if DEBUG:
+            print("on 15min timeframe " + symbol)
 
     return filtered_pairs2
 
@@ -254,7 +259,6 @@ def filter3(filtered_pairs2):
     close = [float(entry[4]) for entry in klines]
     close_array = np.asarray(close)
     close_series = pd.Series(close)
-    # print("on 5m timeframe " + symbol)
 
     # min = ta.MIN(close_array, timeperiod=30)
     # max = ta.MAX(close_array, timeperiod=30)
@@ -280,12 +284,10 @@ def filter3(filtered_pairs2):
     best_fit_line2 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 1.01
     best_fit_line3 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 0.99
 
-    # if x[-1] < best_fit_line1[-1]:
-    #     print('oversold dip found')
-    #     filtered_pairs3.append(symbol)
-
-    if x[-1] < best_fit_line3[-1] and best_fit_line1[0] < best_fit_line1[-1]:
+    if x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]:
         filtered_pairs3.append(symbol)
+        if DEBUG:
+            print("on 5min timeframe " + symbol)
 
     return filtered_pairs3
 
@@ -340,21 +342,22 @@ def analyze(trading_pairs):
 
     if os.path.exists(SIGNAL_FILE_BUY):
         os.remove(SIGNAL_FILE_BUY)
-    for i in trading_pairs:
+
+    for i in trading_pairs:  # 1h
         output = filter1(i)
         # print(filtered_pairs1)
 
-    for i in filtered_pairs1:
+    for i in filtered_pairs1:  # 15m
         output = filter2(i)
         if DEBUG:
             print(output)
 
-    for i in filtered_pairs2:
+    for i in filtered_pairs2:  # 5m
         output = filter3(i)
         if DEBUG:
             print(output)
 
-    for i in filtered_pairs3:
+    for i in filtered_pairs3:  # 1m
         output = momentum(i)
         print(output)
 
