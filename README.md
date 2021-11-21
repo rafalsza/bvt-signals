@@ -25,7 +25,7 @@ SIGNALLING_MODULES:
 
 rs_signals_buy_dip.py
 ```
-DEBUG = True
+DEBUG = False
 CMO_1h = True
 WAVETREND_1h = True
 MACD_1h = False
