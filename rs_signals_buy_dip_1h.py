@@ -59,8 +59,6 @@ def filter1(pairs):
     close = [float(entry[4]) for entry in klines]
     low = [float(entry[3]) for entry in klines]
     high = [float(entry[2]) for entry in klines]
-    open = [float(entry[1]) for entry in klines]
-    close_array = np.asarray(close)
     close_series = pd.Series(close)
     high_series = pd.Series(high)
     low_series = pd.Series(low)
@@ -92,31 +90,12 @@ def filter1(pairs):
     return filtered_pairs1
 
 
-def filter2(filtered_pairs1):
+def filter2(filtered_pairs):
     interval = '5m'
-    symbol = filtered_pairs1
+    symbol = filtered_pairs
     klines = client.get_klines(symbol=symbol, interval=interval)
     open_time = [int(entry[0]) for entry in klines]
     close = [float(entry[4]) for entry in klines]
-    close_array = np.asarray(close)
-    close_series = pd.Series(close)
-
-    # min = ta.MIN(close_array, timeperiod=30)
-    # max = ta.MAX(close_array, timeperiod=30)
-
-    # max = close_series.rolling(30, min_periods=1).max()
-    # min = close_series.rolling(30, min_periods=1).min()
-
-    # real = ta.HT_TRENDLINE(close_array)
-    # wcl = ta.WCLPRICE(max, min, close_array)
-
-    # print(min[-1])
-    # print(max[-1])
-
-    # print(min.iat[-1])
-    # print(max.iat[-1])
-
-    # print(real[-1])
 
     x = close
     y = range(len(x))
@@ -138,9 +117,9 @@ def filter2(filtered_pairs1):
     return filtered_pairs2
 
 
-def momentum(filtered_pairs2):
+def momentum(filtered_pairs):
     interval = '1m'
-    symbol = filtered_pairs2
+    symbol = filtered_pairs
     # klines = client.get_klines(symbol=symbol, interval=interval)
     # open_time = [int(entry[0]) for entry in klines]
     # close = [float(entry[4]) for entry in klines]
