@@ -110,8 +110,8 @@ def filter1(pair):
             # plt.close()
 
     elif CMO_1h and WAVETREND_1h and not MACD_1h:  # cmo=true,wavetrend=true,macd=false
-        if (cmo.iat[-2] < -60 and wt1.iat[-2] < -60 and x[-1] < best_fit_line3[-1] and
-            best_fit_line1[0] <= best_fit_line1[-1]) | (cmo.iat[-2] < -60 and
+        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -60 and x[-1] < best_fit_line3[-1] and
+            best_fit_line1[0] <= best_fit_line1[-1]) | (cmo.iat[-1] < -60 and
                                                         wt1.iat[-2] < -60 and
                                                         x[-1] < best_fit_line3[-1]
                                                         and best_fit_line1[0] >= best_fit_line1[-1]):

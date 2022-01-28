@@ -28,7 +28,6 @@ TICKERS = 'tickers_all.txt'
 SIGNAL_NAME = 'os_signalbuys_3st'
 SIGNAL_FILE_BUY = 'signals/' + SIGNAL_NAME + '.buy'
 # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-
 # for colourful logging to the console
 class txcolors:
     BUY = '\033[92m'

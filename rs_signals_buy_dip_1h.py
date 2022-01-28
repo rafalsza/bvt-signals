@@ -145,7 +145,7 @@ def momentum(filtered_pairs):
     ci = (ap - esa) / (0.015 * d)
     wt1 = pta.ema(ci, n2)
     #
-    print("on 1m timeframe " + symbol)
+    print("on 1h timeframe " + symbol)
     print(f'cmo: {real.iat[-1]}')
     print(f'wt1: {wt1.iat[-1]}')
 
@@ -182,9 +182,7 @@ def analyze(trading_pairs):
         signal_coins[pair] = pair
         with open(SIGNAL_FILE_BUY, 'a+') as f:
             f.writelines(pair + '\n')
-            # timestamp = datetime.now().strftime("%d/%m %H:%M:%S")
-        # with open(SIGNAL_NAME + '.log', 'a+') as f:
-        #     f.write(timestamp + ' ' + pair + '\n')
+
     if selected_pair:
         print(f'{txcolors.BUY}{SIGNAL_NAME}: {selected_pair} - Buy Signal Detected{txcolors.DEFAULT}')
     else:
