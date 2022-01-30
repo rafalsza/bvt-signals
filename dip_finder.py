@@ -33,8 +33,8 @@ class Trader:
         return prices
 
 
-filename = 'config/config.py'
-trader = Trader(filename)
+# filename = 'config/config.py'
+# trader = Trader(filename)
 TICKERS = 'tickers_all.txt'
 DEBUG = True
 WAVETREND_1h = False
