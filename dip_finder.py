@@ -33,9 +33,9 @@ class Trader:
         return prices
 
 
-filename = '../bots/config.py'
+filename = 'config/config.py'
 trader = Trader(filename)
-TICKERS = '../bots/BVT/tickers_all.txt'
+TICKERS = 'tickers_all.txt'
 DEBUG = True
 WAVETREND_1h = False
 CMO_1h = False
@@ -102,7 +102,8 @@ selected_pairCMO = []
 def filter1(pair):
     interval = '1h'
     symbol = pair
-    klines = trader.client.get_klines(symbol=symbol, interval=interval)
+    # klines = trader.client.get_klines(symbol=symbol, interval=interval)
+    klines = client.get_klines(symbol=symbol, interval=interval)
     open_time = [int(entry[0]) for entry in klines]
     close = [float(entry[4]) for entry in klines]
     low = [float(entry[3]) for entry in klines]
@@ -235,7 +236,8 @@ def filter1(pair):
 def filter2(filtered_pairs1):
     interval = '15m'
     symbol = filtered_pairs1
-    klines = trader.client.get_klines(symbol=symbol, interval=interval)
+    # klines = trader.client.get_klines(symbol=symbol, interval=interval)
+    klines = client.get_klines(symbol=symbol, interval=interval)
     open_time = [int(entry[0]) for entry in klines]
     close = [float(entry[4]) for entry in klines]
     close_array = np.asarray(close)
@@ -270,7 +272,8 @@ def filter2(filtered_pairs1):
 def filter3(filtered_pairs2):
     interval = '5m'
     symbol = filtered_pairs2
-    klines = trader.client.get_klines(symbol=symbol, interval=interval)
+    # klines = trader.client.get_klines(symbol=symbol, interval=interval)
+    klines = client.get_klines(symbol=symbol, interval=interval)
     open_time = [int(entry[0]) for entry in klines]
     close = [float(entry[4]) for entry in klines]
     close_array = np.asarray(close)
@@ -372,7 +375,6 @@ def momentum(filtered_pairs3):
     if real.iat[-1] < -50 and wt1.iat[-1] < -60:
         print('oversold dip found')
         selected_pair.append(symbol)
-        selected_pairCMO.append(real.iat[-1])
 
     return selected_pair
 
