@@ -1,11 +1,10 @@
 """
-CUSTOM_LIST: False
+https://www.tradingview.com/script/Iko0E2kL-Nadaraya-Watson-Envelope-LUX/
 """
 from binance.client import Client
 import numpy as np
 import threading
 import os
-import pandas_ta as ta
 import pandas as pd
 from datetime import datetime
 import time
@@ -29,6 +28,16 @@ class TxColors:
     SELL_PROFIT = '\033[32m'
     DIM = '\033[2m\033[35m'
     DEFAULT = '\033[39m'
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
 
 
 def get_symbols():
@@ -118,13 +127,13 @@ def filter1(pairs):
         selected_pair_buy.append(symbol)
         if DEBUG:
             print('found buy')
-            print("on 1h timeframe " + symbol)
+            print(f'on {interval} timeframe {symbol}')
 
     elif ss.nwe_up.iat[-1] < df.close.iat[-1]:
         selected_pair_sell.append(symbol)
         if DEBUG:
             print('found sell')
-            print("on 1h timeframe " + symbol)
+            print(f'on {interval} timeframe {symbol}')
 
     return selected_pair_buy, selected_pair_sell
 
@@ -156,8 +165,8 @@ def analyze(trading_pairs):
 
     if selected_pair_buy:
         print(f'{TxColors.BUY}{SIGNAL_NAME}: {selected_pair_buy} - Buy Signal Detected{TxColors.DEFAULT}')
-    elif selected_pair_sell:
-        print(f'{TxColors.BUY}{SIGNAL_NAME}: {selected_pair_sell} - Sell Signal Detected{TxColors.DEFAULT}')
+    if selected_pair_sell:
+        print(f'{TxColors.RED}{SIGNAL_NAME}: {selected_pair_sell} - Sell Signal Detected{TxColors.RED}')
     else:
         print(f'{TxColors.DEFAULT}{SIGNAL_NAME}: - not enough signal to buy')
     return signal_coins_buy, signal_coins_sell
