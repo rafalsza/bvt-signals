@@ -9,6 +9,7 @@ import pandas_ta as pta
 import pandas as pd
 from datetime import datetime
 import time
+from loguru import logger
 import matplotlib.pyplot as plt
 
 client = Client("", "")
@@ -58,6 +59,7 @@ selected_pair = []
 selected_pairCMO = []
 
 
+@logger.catch
 def filter1(pair):
     interval = '1h'
     symbol = pair
@@ -74,13 +76,37 @@ def filter1(pair):
 
     n1 = 10
     n2 = 21
+    if symbol == "BTCUSDT":
+        n1 = 23
+        n2 = 17
+    elif symbol == 'LTCUSDT':
+        n1 = 11
+        n2 = 15
+    elif symbol == 'ETHUSDT':
+        n1 = 23
+        n2 = 13
+    elif symbol == 'BNBUSDT':
+        n1 = 15
+        n2 = 31
+    elif symbol == 'SOLUSDT':
+        n1 = 12
+        n2 = 12
+    elif symbol == 'XRPUSDT':
+        n1 = 13
+        n2 = 17
+    else:
+        n1 = 10
+        n2 = 21
+
     ap = pta.hlc3(high_series, low_series, close_series)
     esa = pta.ema(ap, n1)
     d = pta.ema(abs(ap - esa), n1)
     ci = (ap - esa) / (0.015 * d)
     wt1 = pta.ema(ci, n2)
+    wt2 = pta.sma(wt1, 4)
     cmo = pta.cmo(close_series, talib=False)
     macdh = pta.macd(close_series)['MACDh_12_26_9']
+    # print(f'{symbol} : {wt1.iat[-1]}')
 
     x = close
     y = range(len(x))
@@ -110,9 +136,9 @@ def filter1(pair):
             # plt.close()
 
     elif CMO_1h and WAVETREND_1h and not MACD_1h:  # cmo=true,wavetrend=true,macd=false
-        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -60 and x[-1] < best_fit_line3[-1] and
+        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and x[-1] < best_fit_line3[-1] and
             best_fit_line1[0] <= best_fit_line1[-1]) | (cmo.iat[-1] < -60 and
-                                                        wt1.iat[-2] < -60 and
+                                                        wt1.iat[-2] < -75 and
                                                         x[-1] < best_fit_line3[-1]
                                                         and best_fit_line1[0] >= best_fit_line1[-1]):
             filtered_pairs1.append(symbol)
@@ -123,9 +149,9 @@ def filter1(pair):
                 print(f'wt1: {wt1.iat[-2]}')
 
     elif CMO_1h and WAVETREND_1h and MACD_1h:  # cmo=true,wavetrend=true,macdh=true
-        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -60 and macdh.iat[-1] > 0 and x[-1] < best_fit_line3[-1] and
+        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and macdh.iat[-1] > 0 and x[-1] < best_fit_line3[-1] and
             best_fit_line1[0] <= best_fit_line1[-1]) | (
-                cmo.iat[-1] < -60 and wt1.iat[-1] < -60 and macdh.iat[-1] > 0 and x[-1] < best_fit_line3[-1] and
+                cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and macdh.iat[-1] > 0 and x[-1] < best_fit_line3[-1] and
                 best_fit_line1[0] <= best_fit_line1[-1]):
             filtered_pairs1.append(symbol)
             if DEBUG:
@@ -136,8 +162,8 @@ def filter1(pair):
                 print(f'macdh: {macdh.iat[-2]}')
 
     elif WAVETREND_1h and not CMO_1h and not MACD_1h:  # cmo=false,wavetrend=true,macdh=false
-        if (wt1.iat[-1] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]) | \
-                (wt1.iat[-1] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]):
+        if (wt1.iat[-1] < -75 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]) | \
+                (wt1.iat[-1] < -75 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]):
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -256,7 +282,6 @@ def momentum(filtered_pairs3):
     if real.iat[-1] < -50 and wt1.iat[-1] < -60:
         print('oversold dip found')
         selected_pair.append(symbol)
-        selected_pairCMO.append(real.iat[-1])
 
     return selected_pair
 
@@ -267,7 +292,6 @@ def analyze(trading_pairs):
     filtered_pairs2.clear()
     filtered_pairs3.clear()
     selected_pair.clear()
-    selected_pairCMO.clear()
 
     if os.path.exists(SIGNAL_FILE_BUY):
         os.remove(SIGNAL_FILE_BUY)
@@ -333,3 +357,4 @@ def do_work():
             continue
         except KeyboardInterrupt as ki:
             continue
+
