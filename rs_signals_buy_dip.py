@@ -76,21 +76,111 @@ def filter1(pair):
 
     n1 = 10
     n2 = 21
-    if symbol == "BTCUSDT":
+    if symbol == 'BTCUSDT':
         n1 = 23
         n2 = 17
+    elif symbol == 'ALGOUSDT':
+        n1 = 21
+        n2 = 12
+    elif symbol == 'AVAXUSDT':
+        n1 = 20
+        n2 = 30
+    elif symbol == 'AXSUSDT':
+        n1 = 10
+        n2 = 18
+    elif symbol == 'BCHUSDT':
+        n1 = 21
+        n2 = 36
+    elif symbol == 'EGLDUSDT':
+        n1 = 10
+        n2 = 15
+    elif symbol == 'ETCUSDT':
+        n1 = 20
+        n2 = 24
+    elif symbol == 'FILUSDT':
+        n1 = 12
+        n2 = 31
+    elif symbol == 'FTTUSDT':
+        n1 = 10
+        n2 = 27
+    elif symbol == 'HBARUSDT':
+        n1 = 17
+        n2 = 11
+    elif symbol == 'ICPUSDT':
+        n1 = 10
+        n2 = 27
+    elif symbol == 'LINKUSDT':
+        n1 = 22
+        n2 = 39
     elif symbol == 'LTCUSDT':
         n1 = 11
         n2 = 15
+    elif symbol == 'ADAUSDT':
+        n1 = 11
+        n2 = 11
+    elif symbol == 'ATOMUSDT':
+        n1 = 39
+        n2 = 24
+    elif symbol == 'CAKEUSDT':
+        n1 = 14
+        n2 = 32
+    elif symbol == 'DOGEUSDT':
+        n1 = 14
+        n2 = 37
+    elif symbol == 'DOTUSDT':
+        n1 = 17
+        n2 = 29
+    elif symbol == 'FTMUSDT':
+        n1 = 15
+        n2 = 32
+    elif symbol == 'KLAYUSDT':
+        n1 = 11
+        n2 = 10
+    elif symbol == 'LUNAUSDT':
+        n1 = 29
+        n2 = 29
+    elif symbol == 'MANAUSDT':
+        n1 = 16
+        n2 = 11
+    elif symbol == 'MATICUSDT':
+        n1 = 25
+        n2 = 35
+    elif symbol == 'NEARUSDT':
+        n1 = 38
+        n2 = 23
     elif symbol == 'ETHUSDT':
         n1 = 23
         n2 = 13
     elif symbol == 'BNBUSDT':
         n1 = 15
         n2 = 31
+    elif symbol == 'SANDUSDT':
+        n1 = 36
+        n2 = 26
+    elif symbol == 'SHIBUSDT':
+        n1 = 21
+        n2 = 38
     elif symbol == 'SOLUSDT':
         n1 = 12
         n2 = 12
+    elif symbol == 'THETAUSDT':
+        n1 = 17
+        n2 = 13
+    elif symbol == 'TRXUSDT':
+        n1 = 15
+        n2 = 39
+    elif symbol == 'UNIUSDT':
+        n1 = 25
+        n2 = 28
+    elif symbol == 'XLMUSDT':
+        n1 = 21
+        n2 = 18
+    elif symbol == 'XMRUSDT':
+        n1 = 23
+        n2 = 13
+    elif symbol == 'XTZUSDT':
+        n1 = 17
+        n2 = 26
     elif symbol == 'XRPUSDT':
         n1 = 13
         n2 = 17
