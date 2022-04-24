@@ -100,6 +100,9 @@ def filter1(pair):
     elif symbol == 'AXSUSDT':
         n1 = 10
         n2 = 18
+    elif symbol == 'BATUSDT':
+        n1 = 12
+        n2 = 23
     elif symbol == 'BCHUSDT':
         n1 = 21
         n2 = 36
@@ -112,12 +115,24 @@ def filter1(pair):
     elif symbol == 'CELOUSDT':
         n1 = 31
         n2 = 22
+    elif symbol == 'CHZUSDT':
+        n1 = 12
+        n2 = 35
+    elif symbol == 'COMPUSDT':
+        n1 = 15
+        n2 = 13
+    elif symbol == 'DASHUSDT':
+        n1 = 17
+        n2 = 37
     elif symbol == 'DOGEUSDT':
         n1 = 14
         n2 = 37
     elif symbol == 'DOTUSDT':
         n1 = 17
         n2 = 29
+    elif symbol == 'DCRUSDT':
+        n1 = 18
+        n2 = 37
     elif symbol == 'EGLDUSDT':
         n1 = 10
         n2 = 15
@@ -163,6 +178,9 @@ def filter1(pair):
     elif symbol == 'IOTAUSDT':
         n1 = 18
         n2 = 32
+    elif symbol == 'KAVAUSDT':
+        n1 = 20
+        n2 = 19
     elif symbol == 'KSMUSDT':
         n1 = 18
         n2 = 39
@@ -172,6 +190,9 @@ def filter1(pair):
     elif symbol == 'LTCUSDT':
         n1 = 11
         n2 = 15
+    elif symbol == 'LRCUSDT':
+        n1 = 28
+        n2 = 39
     elif symbol == 'KLAYUSDT':
         n1 = 11
         n2 = 10
@@ -184,6 +205,9 @@ def filter1(pair):
     elif symbol == 'MATICUSDT':
         n1 = 25
         n2 = 35
+    elif symbol == 'MINAUSDT':
+        n1 = 21
+        n2 = 20
     elif symbol == 'MKRUSDT':
         n1 = 15
         n2 = 19
@@ -232,6 +256,9 @@ def filter1(pair):
     elif symbol == 'XECUSDT':
         n1 = 19
         n2 = 37
+    elif symbol == 'XEMUSDT':
+        n1 = 12
+        n2 = 23
     elif symbol == 'XLMUSDT':
         n1 = 21
         n2 = 18
