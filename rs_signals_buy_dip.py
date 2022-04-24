@@ -205,6 +205,9 @@ def filter1(pair):
     elif symbol == 'WAVESUSDT':
         n1 = 13
         n2 = 10
+    elif symbol == 'XECUSDT':
+        n1 = 19
+        n2 = 37
     elif symbol == 'XLMUSDT':
         n1 = 21
         n2 = 18
