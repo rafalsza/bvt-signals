@@ -79,27 +79,87 @@ def filter1(pair):
     if symbol == 'BTCUSDT':
         n1 = 23
         n2 = 17
+    elif symbol == '1INCHUSDT':
+        n1 = 12
+        n2 = 29
     elif symbol == 'AAVEUSDT':
         n1 = 22
         n2 = 17
+    elif symbol == 'ACMUSDT':
+        n1 = 20
+        n2 = 19
     elif symbol == 'ADAUSDT':
         n1 = 11
         n2 = 11
+    elif symbol == 'AIONUSDT':
+        n1 = 12
+        n2 = 16
+    elif symbol == 'AKROUSDT':
+        n1 = 11
+        n2 = 20
     elif symbol == 'ALGOUSDT':
         n1 = 21
         n2 = 12
+    elif symbol == 'ALICEUSDT':
+        n1 = 13
+        n2 = 11
+    elif symbol == 'ALPHAUSDT':
+        n1 = 18
+        n2 = 39
+    elif symbol == 'ANKRUSDT':
+        n1 = 37
+        n2 = 39
     elif symbol == 'ARUSDT':
         n1 = 13
         n2 = 13
+    elif symbol == 'ARDRUSDT':
+        n1 = 15
+        n2 = 18
+    elif symbol == 'ARPAUSDT':
+        n1 = 22
+        n2 = 39
+    elif symbol == 'ASRUSDT':
+        n1 = 18
+        n2 = 36
+    elif symbol == 'ATAUSDT':
+        n1 = 13
+        n2 = 16
+    elif symbol == 'ATMUSDT':
+        n1 = 13
+        n2 = 35
     elif symbol == 'ATOMUSDT':
         n1 = 39
         n2 = 24
+    elif symbol == 'AUDIOUSDT':
+        n1 = 33
+        n2 = 31
+    elif symbol == 'AUTOUSDT':
+        n1 = 27
+        n2 = 37
+    elif symbol == 'AVAUSDT':
+        n1 = 10
+        n2 = 10
     elif symbol == 'AVAXUSDT':
         n1 = 20
         n2 = 30
     elif symbol == 'AXSUSDT':
         n1 = 10
         n2 = 18
+    elif symbol == 'BADGERUSDT':
+        n1 = 20
+        n2 = 23
+    elif symbol == 'BAKEUSDT':
+        n1 = 16
+        n2 = 34
+    elif symbol == 'BALUSDT':
+        n1 = 10
+        n2 = 18
+    elif symbol == 'BANDUSDT':
+        n1 = 21
+        n2 = 36
+    elif symbol == 'BARUSDT':
+        n1 = 10
+        n2 = 15
     elif symbol == 'BATUSDT':
         n1 = 12
         n2 = 23
@@ -172,6 +232,9 @@ def filter1(pair):
     elif symbol == 'HNTUSDT':
         n1 = 12
         n2 = 10
+    elif symbol == 'HOTUSDT':
+        n1 = 15
+        n2 = 27
     elif symbol == 'ICPUSDT':
         n1 = 10
         n2 = 27
@@ -220,6 +283,9 @@ def filter1(pair):
     elif symbol == 'QNTUSDT':
         n1 = 15
         n2 = 12
+    elif symbol == 'ROSEUSDT':
+        n1 = 18
+        n2 = 38
     elif symbol == 'RUNEUSDT':
         n1 = 16
         n2 = 27
