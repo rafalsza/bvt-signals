@@ -164,23 +164,53 @@ def filter1(pair):
         n1 = 12
         n2 = 23
     elif symbol == 'BCHUSDT':
-        n1 = 21
-        n2 = 36
+        n1 = 10
+        n2 = 23
+    elif symbol == 'BEAMUSDT':
+        n1 = 11
+        n2 = 24
+    elif symbol == 'BELUSDT':
+        n1 = 15
+        n2 = 20
+    elif symbol == 'BLZUSDT':
+        n1 = 27
+        n2 = 22
     elif symbol == 'BNBUSDT':
         n1 = 15
         n2 = 31
+    elif symbol == 'BTGUSDT':
+        n1 = 13
+        n2 = 12
+    elif symbol == 'BURGERUSDT':
+        n1 = 16
+        n2 = 37
+    elif symbol == 'C98USDT':
+        n1 = 14
+        n2 = 19
     elif symbol == 'CAKEUSDT':
         n1 = 14
         n2 = 32
     elif symbol == 'CELOUSDT':
         n1 = 31
         n2 = 22
+    elif symbol == 'CELRUSDT':
+        n1 = 24
+        n2 = 18
+    elif symbol == 'CFXUSDT':
+        n1 = 10
+        n2 = 14
     elif symbol == 'CHZUSDT':
         n1 = 12
         n2 = 35
+    elif symbol == 'CHRUSDT':
+        n1 = 28
+        n2 = 12
     elif symbol == 'COMPUSDT':
         n1 = 15
         n2 = 13
+    elif symbol == 'CTKUSDT':
+        n1 = 10
+        n2 = 28
     elif symbol == 'DASHUSDT':
         n1 = 17
         n2 = 37
@@ -244,15 +274,30 @@ def filter1(pair):
     elif symbol == 'KAVAUSDT':
         n1 = 20
         n2 = 19
+    elif symbol == 'KEYUSDT':
+        n1 = 19
+        n2 = 14
+    elif symbol == 'KNCUSDT':
+        n1 = 24
+        n2 = 10
     elif symbol == 'KSMUSDT':
         n1 = 18
         n2 = 39
+    elif symbol == 'LINAUSDT':
+        n1 = 12
+        n2 = 29
     elif symbol == 'LINKUSDT':
         n1 = 22
         n2 = 39
+    elif symbol == 'LSKUSDT':
+        n1 = 12
+        n2 = 24
     elif symbol == 'LTCUSDT':
         n1 = 11
         n2 = 15
+    elif symbol == 'LTOUSDT':
+        n1 = 11
+        n2 = 10
     elif symbol == 'LRCUSDT':
         n1 = 28
         n2 = 39
@@ -274,15 +319,27 @@ def filter1(pair):
     elif symbol == 'MKRUSDT':
         n1 = 15
         n2 = 19
+    elif symbol == 'MTLUSDT':
+        n1 = 11
+        n2 = 20
     elif symbol == 'NEARUSDT':
         n1 = 38
         n2 = 23
     elif symbol == 'ONEUSDT':
         n1 = 18
         n2 = 37
+    elif symbol == 'ONGUSDT':
+        n1 = 35
+        n2 = 29
+    elif symbol == 'PERPUSDT':
+        n1 = 29
+        n2 = 26
     elif symbol == 'QNTUSDT':
         n1 = 15
         n2 = 12
+    elif symbol == 'RIFUSDT':
+        n1 = 15
+        n2 = 33
     elif symbol == 'ROSEUSDT':
         n1 = 18
         n2 = 38
