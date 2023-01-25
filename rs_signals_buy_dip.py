@@ -10,7 +10,8 @@ import pandas as pd
 from datetime import datetime
 import time
 from loguru import logger
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from sklearn.linear_model import LinearRegression
 
 client = Client("", "")
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
@@ -23,9 +24,8 @@ CMO_1h = True
 WAVETREND_1h = True
 MACD_1h = False
 
-
 # for colourful logging to the console
-class txcolors:
+class TxColors:
     BUY = '\033[92m'
     WARNING = '\033[93m'
     SELL_LOSS = '\033[91m'
@@ -39,24 +39,43 @@ filtered_pairs2 = []
 filtered_pairs3 = []
 selected_pair = []
 
+def importdata(symbol, interval, limit):
+    client = Client()
+    df = pd.DataFrame(
+        client.get_historical_klines(symbol, interval, limit=limit)
+    ).astype(float)
+    df = df.iloc[:, :6]
+    df.columns = ["timestamp", "Open", "High", "Low", "Close", "Volume"]
+    df = df.set_index("timestamp")
+    df.index = pd.to_datetime(df.index, unit="ms")
+    return df
+def regression_channel(data):
+    # Create the linear regression channel
+    y = data["Close"].values
+    X = range(len(y))
+    X = np.array(X).reshape(-1, 1)  # Reshape X to be a 2D array
+    model = LinearRegression()
+    model.fit(X, y)
+    linear_regression = model.predict(X)
+    # Calculate the standard deviation of the residuals
+    residuals = y - model.predict(X)
+    std = np.std(residuals)
+    linear_upper = linear_regression + 2 * std
+    linear_lower = linear_regression - 2 * std
+
+    return (
+        linear_regression,
+        linear_lower,
+        linear_upper,
+    )
 
 @logger.catch
 def filter1(pair):
     interval = '1h'
     symbol = pair
-    klines = client.get_klines(symbol=symbol, interval=interval)
-    open_time = [int(entry[0]) for entry in klines]
-    close = [float(entry[4]) for entry in klines]
-    low = [float(entry[3]) for entry in klines]
-    high = [float(entry[2]) for entry in klines]
-    open = [float(entry[1]) for entry in klines]
-    close_array = np.asarray(close)
-    close_series = pd.Series(close)
-    high_series = pd.Series(high)
-    low_series = pd.Series(low)
+    df = importdata(symbol, interval, limit=500)
+    linear_regression,linear_lower,linear_upper = regression_channel(df)
 
-    n1 = 10
-    n2 = 21
     if symbol == 'BTCUSDT':
         n1 = 20
         n2 = 17
@@ -505,49 +524,31 @@ def filter1(pair):
         n1 = 10
         n2 = 21
 
-    ap = pta.hlc3(high_series, low_series, close_series)
+    ap = pta.hlc3(df.High, df.Low, df.Close)
     esa = pta.ema(ap, n1)
     d = pta.ema(abs(ap - esa), n1)
     ci = (ap - esa) / (0.015 * d)
     wt1 = pta.ema(ci, n2)
     wt2 = pta.sma(wt1, 4)
-    cmo = pta.cmo(close_series, talib=False)
-    macdh = pta.macd(close_series)['MACDh_12_26_9']
+    cmo = pta.cmo(df.Close, talib=False)
+    macdh = pta.macd(df.Close)['MACDh_12_26_9']
     # print(f'{symbol} : {wt1.iat[-1]}')
 
-    x = close
-    y = range(len(x))
-
-    best_fit_line1 = np.poly1d(np.polyfit(y, x, 1))(y)
-    best_fit_line2 = np.poly1d(np.polyfit(y, x + np.std(x), 1))(y)
-    best_fit_line3 = np.poly1d(np.polyfit(y, x - np.std(x), 1))(y)
-
     if CMO_1h and not WAVETREND_1h and not MACD_1h:  # cmo=true,wavetrend=false,macdh=false
-        if (cmo.iat[-1] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]) | \
-                (cmo.iat[-1] < -60 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]):
+        if (cmo.iat[-1] < -60 and df.Close[-1] < linear_lower[-1] and linear_regression[0] <= linear_regression[-1]) | \
+                (cmo.iat[-1] < -60 and df.Close[-1] < linear_lower[-1] and linear_regression[0] >= linear_regression[-1]):
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
                 print("on 1h timeframe " + symbol)
                 print(f'cmo: {cmo.iat[-2]}')
 
-            # plt.figure(figsize=(8, 6))
-            # plt.grid(True)
-            # plt.plot(x)
-            # plt.title(label=f'{symbol}', color="green")
-            # plt.plot(best_fit_line1, '--', color='r')
-            # plt.plot(best_fit_line2, '--', color='r')
-            # plt.plot(best_fit_line3, '--', color='green')
-            # plt.show(block=False)
-            # plt.pause(6)
-            # plt.close()
-
     elif CMO_1h and WAVETREND_1h and not MACD_1h:  # cmo=true,wavetrend=true,macd=false
-        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and x[-1] < best_fit_line3[-1] and
-            best_fit_line1[0] <= best_fit_line1[-1]) | (cmo.iat[-1] < -60 and
+        if (cmo.iat[-1] < -35 and wt1.iat[-1] < -35 and df.Close[-1] < linear_lower[-1] and
+            linear_regression[0] <= linear_regression[-1]) | (cmo.iat[-1] < -60 and
                                                         wt1.iat[-2] < -75 and
-                                                        x[-1] < best_fit_line3[-1]
-                                                        and best_fit_line1[0] >= best_fit_line1[-1]):
+                                                        df.Close[-1] < linear_lower[-1]
+                                                        and linear_regression[0] >= linear_regression[-1]):
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -555,11 +556,22 @@ def filter1(pair):
                 print(f'cmo: {cmo.iat[-2]}')
                 print(f'wt1: {wt1.iat[-2]}')
 
+            plt.figure(figsize=(8, 6))
+            plt.grid(True)
+            plt.plot(list(df.Close))
+            plt.title(label=f'{symbol}', color="green")
+            plt.plot(linear_regression, '--', color='r')
+            plt.plot(linear_upper, '--', color='r')
+            plt.plot(linear_lower, '--', color='green')
+            plt.show(block=False)
+            plt.pause(15)
+            plt.close()
+
     elif CMO_1h and WAVETREND_1h and MACD_1h:  # cmo=true,wavetrend=true,macdh=true
-        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and macdh.iat[-1] > 0 and x[-1] < best_fit_line3[-1] and
-            best_fit_line1[0] <= best_fit_line1[-1]) | (
-                cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and macdh.iat[-1] > 0 and x[-1] < best_fit_line3[-1] and
-                best_fit_line1[0] <= best_fit_line1[-1]):
+        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and macdh.iat[-1] > 0 and df.Close[-1] < linear_lower[-1] and
+            linear_regression[0] <= linear_regression[-1]) | (
+                cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and macdh.iat[-1] > 0 and df.Close[-1] < linear_lower[-1] and
+                linear_regression[0] <= linear_regression[-1]):
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -569,8 +581,8 @@ def filter1(pair):
                 print(f'macdh: {macdh.iat[-2]}')
 
     elif WAVETREND_1h and not CMO_1h and not MACD_1h:  # cmo=false,wavetrend=true,macdh=false
-        if (wt1.iat[-1] < -75 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]) | \
-                (wt1.iat[-1] < -75 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]):
+        if (wt1.iat[-1] < -75 and df.Close[-1] < linear_lower[-1] and linear_regression[0] <= linear_regression[-1]) | \
+                (wt1.iat[-1] < -75 and df.Close[-1] < linear_lower[-1] and linear_regression[0] >= linear_regression[-1]):
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -578,11 +590,11 @@ def filter1(pair):
                 print(f'wt1: {wt1.iat[-2]}')
 
     elif CMO_1h and MACD_1h and not WAVETREND_1h:  # cmo=true,wavetrend=false,macdh=true
-        if (cmo.iat[-1] < -60 and macdh.iat[-1] > 0 and x[-1] < best_fit_line3[-1] and
-            best_fit_line1[0] <= best_fit_line1[-1]) | (cmo.iat[-1] < -60 and
+        if (cmo.iat[-1] < -60 and macdh.iat[-1] > 0 and df.Close[-1] < linear_lower[-1] and
+            linear_regression[0] <= linear_regression[-1]) | (cmo.iat[-1] < -60 and
                                                         macdh.iat[-1] > 0 and
-                                                        x[-1] < best_fit_line3[-1] and
-                                                        best_fit_line1[0] > best_fit_line1[-1]):
+                                                        df.Close[-1] < linear_lower[-1] and
+                                                        linear_regression[0] > linear_regression[-1]):
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -591,8 +603,8 @@ def filter1(pair):
                 print(f'macdh: {macdh.iat[-1]}')
 
     elif MACD_1h and not CMO_1h and not WAVETREND_1h:  # cmo=false,wavetrend=false,macdh=true
-        if (macdh.iat[-1] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]) | \
-                (macdh.iat[-1] > 0 and x[-1] < best_fit_line3[-1] and best_fit_line1[0] > best_fit_line1[-1]):
+        if (macdh.iat[-1] > 0 and df.Close[-1] < linear_lower[-1] and linear_regression[0] <= linear_regression[-1]) | \
+                (macdh.iat[-1] > 0 and df.Close[-1] < linear_lower[-1] and linear_regression[0] > linear_regression[-1]):
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -600,8 +612,8 @@ def filter1(pair):
                 print(f'macdh: {macdh.iat[-1]}')
 
     else:
-        if (x[-1] < best_fit_line3[-1] and best_fit_line1[0] <= best_fit_line1[-1]) | \
-                (x[-1] < best_fit_line3[-1] and best_fit_line1[0] >= best_fit_line1[-1]):
+        if (df.Close[-1] < linear_lower[-1] and linear_regression[0] <= linear_regression[-1]) | \
+                (df.Close[-1] < linear_lower[-1] and linear_regression[0] >= linear_regression[-1]):
             filtered_pairs1.append(symbol)
             print('found')
             print(f'on {interval} timeframe {symbol}')
@@ -613,9 +625,7 @@ def filter2(filtered_pairs1):
     interval = '15m'
     symbol = filtered_pairs1
     klines = client.get_klines(symbol=symbol, interval=interval)
-    open_time = [int(entry[0]) for entry in klines]
     close = [float(entry[4]) for entry in klines]
-    close_array = np.asarray(close)
 
     x = close
     y = range(len(x))
@@ -637,7 +647,6 @@ def filter3(filtered_pairs2):
     interval = '5m'
     symbol = filtered_pairs2
     klines = client.get_klines(symbol=symbol, interval=interval)
-    open_time = [int(entry[0]) for entry in klines]
     close = [float(entry[4]) for entry in klines]
 
     x = close
@@ -729,9 +738,9 @@ def analyze(trading_pairs):
         # with open(SIGNAL_NAME + '.log', 'a+') as f:
         #     f.write(timestamp + ' ' + pair + '\n')
     if selected_pair:
-        print(f'{txcolors.BUY}{SIGNAL_NAME}: {selected_pair} - Buy Signal Detected{txcolors.DEFAULT}')
+        print(f'{TxColors.BUY}{SIGNAL_NAME}: {selected_pair} - Buy Signal Detected{TxColors.DEFAULT}')
     else:
-        print(f'{txcolors.DEFAULT}{SIGNAL_NAME}: - not enough signal to buy')
+        print(f'{TxColors.DEFAULT}{SIGNAL_NAME}: - not enough signal to buy')
     return signal_coins
 
 
@@ -765,3 +774,4 @@ def do_work():
         except KeyboardInterrupt as ki:
             continue
 
+do_work()
