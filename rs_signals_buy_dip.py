@@ -34,29 +34,10 @@ class txcolors:
     DEFAULT = '\033[39m'
 
 
-def get_symbols():
-    response = client.get_ticker()
-    PAIRS_WITH = 'USDT'
-    ignore = ['UP', 'DOWN', 'AUD', 'BRL', 'BVND', 'BUSD', 'BCC', 'BCHABC', 'BCHSV', 'BEAR', 'BNBBEAR', 'BNBBULL',
-              'BULL',
-              'BKRW', 'DAI', 'ERD', 'EUR', 'USDS', 'HC', 'LEND', 'MCO', 'GBP', 'RUB', 'TRY', 'NPXS', 'PAX', 'STORM',
-              'VEN', 'UAH', 'USDC', 'NGN', 'VAI', 'STRAT', 'SUSD', 'XZC', 'RAD']
-    symbols = []
-
-    for symbol in response:
-        if PAIRS_WITH in symbol['symbol'] and all(item not in symbol['symbol'] for item in ignore):
-            if symbol['symbol'][-len(PAIRS_WITH):] == PAIRS_WITH:
-                symbols.append(symbol['symbol'])
-            symbols.sort()
-    # symbols = [sub[: -4] for sub in symbols]   # without USDT
-    return symbols
-
-
 filtered_pairs1 = []
 filtered_pairs2 = []
 filtered_pairs3 = []
 selected_pair = []
-selected_pairCMO = []
 
 
 @logger.catch
@@ -77,329 +58,449 @@ def filter1(pair):
     n1 = 10
     n2 = 21
     if symbol == 'BTCUSDT':
-        n1 = 23
+        n1 = 20
         n2 = 17
     elif symbol == '1INCHUSDT':
+        n1 = 26
+        n2 = 30
+    elif symbol == 'AAVEUSDT':
+        n1 = 10
+        n2 = 12
+    elif symbol == 'ACAUSDT':
+        n1 = 10
+        n2 = 32
+    elif symbol == 'ADAUSDT':
+        n1 = 15
+        n2 = 31
+    elif symbol == 'ALGOUSDT':
+        n1 = 10
+        n2 = 26
+    elif symbol == 'ALPHAUSDT':
+        n1 = 10
+        n2 = 10
+    elif symbol == 'AMPUSDT':
+        n1 = 10
+        n2 = 38
+    elif symbol == 'ANKRUSDT':
+        n1 = 16
+        n2 = 22
+    elif symbol == 'ANTUSDT':
+        n1 = 10
+        n2 = 16
+    elif symbol == 'APEUSDT':
+        n1 = 23
+        n2 = 30
+    elif symbol == 'API3USDT':
+        n1 = 23
+        n2 = 10
+    elif symbol == 'APTUSDT':
         n1 = 12
         n2 = 29
-    elif symbol == 'AAVEUSDT':
-        n1 = 22
-        n2 = 17
-    elif symbol == 'ACMUSDT':
-        n1 = 20
-        n2 = 19
-    elif symbol == 'ADAUSDT':
+    elif symbol == 'ARDRUSDT':
         n1 = 11
-        n2 = 11
-    elif symbol == 'AIONUSDT':
-        n1 = 12
-        n2 = 16
-    elif symbol == 'AKROUSDT':
-        n1 = 11
-        n2 = 20
-    elif symbol == 'ALGOUSDT':
-        n1 = 21
-        n2 = 12
-    elif symbol == 'ALICEUSDT':
-        n1 = 13
-        n2 = 11
-    elif symbol == 'ALPHAUSDT':
-        n1 = 18
-        n2 = 39
-    elif symbol == 'ANKRUSDT':
-        n1 = 37
-        n2 = 39
+        n2 = 23
     elif symbol == 'ARUSDT':
         n1 = 13
         n2 = 13
-    elif symbol == 'ARDRUSDT':
-        n1 = 15
-        n2 = 18
-    elif symbol == 'ARPAUSDT':
-        n1 = 22
-        n2 = 39
-    elif symbol == 'ASRUSDT':
-        n1 = 18
-        n2 = 36
-    elif symbol == 'ATAUSDT':
-        n1 = 13
-        n2 = 16
-    elif symbol == 'ATMUSDT':
-        n1 = 13
-        n2 = 35
+    elif symbol == 'ASTRUSDT':
+        n1 = 12
+        n2 = 10
     elif symbol == 'ATOMUSDT':
         n1 = 39
         n2 = 24
     elif symbol == 'AUDIOUSDT':
-        n1 = 33
-        n2 = 31
-    elif symbol == 'AUTOUSDT':
-        n1 = 27
-        n2 = 37
-    elif symbol == 'AVAUSDT':
-        n1 = 10
-        n2 = 10
+        n1 = 11
+        n2 = 16
     elif symbol == 'AVAXUSDT':
-        n1 = 20
-        n2 = 30
+        n1 = 12
+        n2 = 22
     elif symbol == 'AXSUSDT':
-        n1 = 10
-        n2 = 18
-    elif symbol == 'BADGERUSDT':
-        n1 = 20
-        n2 = 23
-    elif symbol == 'BAKEUSDT':
-        n1 = 16
+        n1 = 12
         n2 = 34
     elif symbol == 'BALUSDT':
-        n1 = 10
-        n2 = 18
-    elif symbol == 'BANDUSDT':
-        n1 = 21
-        n2 = 36
-    elif symbol == 'BARUSDT':
-        n1 = 10
-        n2 = 15
-    elif symbol == 'BATUSDT':
-        n1 = 12
-        n2 = 23
-    elif symbol == 'BCHUSDT':
-        n1 = 10
-        n2 = 23
-    elif symbol == 'BEAMUSDT':
-        n1 = 11
-        n2 = 24
-    elif symbol == 'BELUSDT':
-        n1 = 15
-        n2 = 20
-    elif symbol == 'BLZUSDT':
-        n1 = 27
-        n2 = 22
-    elif symbol == 'BNBUSDT':
-        n1 = 15
-        n2 = 31
-    elif symbol == 'BTGUSDT':
-        n1 = 13
-        n2 = 12
-    elif symbol == 'BURGERUSDT':
-        n1 = 16
-        n2 = 37
-    elif symbol == 'C98USDT':
         n1 = 14
         n2 = 19
+    elif symbol == 'BANDUSDT':
+        n1 = 11
+        n2 = 38
+    elif symbol == 'BATUSDT':
+        n1 = 10
+        n2 = 13
+    elif symbol == 'BCHUSDT':
+        n1 = 10
+        n2 = 33
+    elif symbol == 'BICOUSDT':
+        n1 = 10
+        n2 = 26
+    elif symbol == 'BNBUSDT':
+        n1 = 11
+        n2 = 23
+    elif symbol == 'BNXUSDT':
+        n1 = 10
+        n2 = 34
+    elif symbol == 'BSWUSDT':
+        n1 = 11
+        n2 = 22
     elif symbol == 'CAKEUSDT':
         n1 = 14
         n2 = 32
     elif symbol == 'CELOUSDT':
-        n1 = 31
-        n2 = 22
+        n1 = 20
+        n2 = 38
     elif symbol == 'CELRUSDT':
         n1 = 24
         n2 = 18
-    elif symbol == 'CFXUSDT':
-        n1 = 10
-        n2 = 14
     elif symbol == 'CHZUSDT':
-        n1 = 12
-        n2 = 35
+        n1 = 13
+        n2 = 16
     elif symbol == 'CHRUSDT':
-        n1 = 28
-        n2 = 12
-    elif symbol == 'COMPUSDT':
-        n1 = 15
-        n2 = 13
-    elif symbol == 'CTKUSDT':
         n1 = 10
-        n2 = 28
+        n2 = 39
+    elif symbol == 'CKBUSDT':
+        n1 = 10
+        n2 = 10
+    elif symbol == 'COMPUSDT':
+        n1 = 18
+        n2 = 14
+    elif symbol == 'COTIUSDT':
+        n1 = 12
+        n2 = 17
+    elif symbol == 'CRVUSDT':
+        n1 = 15
+        n2 = 27
+    elif symbol == 'CTKUSDT':
+        n1 = 24
+        n2 = 10
+    elif symbol == 'CTSIUSDT':
+        n1 = 14
+        n2 = 11
+    elif symbol == 'CVXUSDT':
+        n1 = 10
+        n2 = 39
     elif symbol == 'DASHUSDT':
-        n1 = 17
+        n1 = 11
+        n2 = 30
+    elif symbol == 'DENTUSDT':
+        n1 = 19
         n2 = 37
     elif symbol == 'DOGEUSDT':
-        n1 = 14
-        n2 = 37
+        n1 = 10
+        n2 = 36
     elif symbol == 'DOTUSDT':
-        n1 = 17
-        n2 = 29
+        n1 = 10
+        n2 = 20
+    elif symbol == 'DYDXUSDT':
+        n1 = 32
+        n2 = 39
     elif symbol == 'DCRUSDT':
-        n1 = 18
-        n2 = 37
+        n1 = 17
+        n2 = 38
+    elif symbol == 'DEXEUSDT':
+        n1 = 32
+        n2 = 13
+    elif symbol == 'DGBUSDT':
+        n1 = 20
+        n2 = 23
     elif symbol == 'EGLDUSDT':
         n1 = 10
         n2 = 15
+    elif symbol == 'ELFUSDT':
+        n1 = 24
+        n2 = 16
     elif symbol == 'ENJUSDT':
-        n1 = 11
-        n2 = 11
+        n1 = 10
+        n2 = 12
+    elif symbol == 'ENSUSDT':
+        n1 = 10
+        n2 = 29
     elif symbol == 'EOSUSDT':
+        n1 = 10
+        n2 = 19
+    elif symbol == 'ETCUSDT':
+        n1 = 10
+        n2 = 10
+    elif symbol == 'ETHUSDT':
+        n1 = 10
+        n2 = 19
+    elif symbol == 'FETUSDT':
+        n1 = 11
+        n2 = 15
+    elif symbol == 'FILUSDT':
+        n1 = 11
+        n2 = 33
+    elif symbol == 'FLOWUSDT':
+        n1 = 10
+        n2 = 28
+    elif symbol == 'FLUXUSDT':
+        n1 = 12
+        n2 = 35
+    elif symbol == 'FTMUSDT':
         n1 = 17
         n2 = 39
-    elif symbol == 'ETCUSDT':
-        n1 = 20
-        n2 = 24
-    elif symbol == 'ETHUSDT':
-        n1 = 23
-        n2 = 13
-    elif symbol == 'FILUSDT':
-        n1 = 12
-        n2 = 31
-    elif symbol == 'FLOWUSDT':
-        n1 = 25
-        n2 = 37
-    elif symbol == 'FTTUSDT':
-        n1 = 10
+    elif symbol == 'FUNUSDT':
+        n1 = 11
         n2 = 27
-    elif symbol == 'FTMUSDT':
-        n1 = 15
-        n2 = 32
     elif symbol == 'FXSUSDT':
-        n1 = 13
-        n2 = 38
+        n1 = 11
+        n2 = 37
+    elif symbol == 'GNOUSDT':
+        n1 = 11
+        n2 = 26
     elif symbol == 'GRTUSDT':
-        n1 = 26
-        n2 = 28
-    elif symbol == 'HBARUSDT':
-        n1 = 17
-        n2 = 11
-    elif symbol == 'HNTUSDT':
-        n1 = 12
-        n2 = 10
-    elif symbol == 'HOTUSDT':
         n1 = 15
-        n2 = 27
+        n2 = 23
+    elif symbol == 'GTCUSDT':
+        n1 = 21
+        n2 = 25
+    elif symbol == 'HBARUSDT':
+        n1 = 16
+        n2 = 13
+    elif symbol == 'HIVEUSDT':
+        n1 = 10
+        n2 = 16
+    elif symbol == 'HOTUSDT':
+        n1 = 11
+        n2 = 21
     elif symbol == 'ICPUSDT':
+        n1 = 15
+        n2 = 23
+    elif symbol == 'ICXUSDT':
         n1 = 10
         n2 = 27
-    elif symbol == 'IOTAUSDT':
+    elif symbol == 'IMXUSDT':
         n1 = 18
         n2 = 32
-    elif symbol == 'KAVAUSDT':
+    elif symbol == 'INJUSDT':
+        n1 = 14
+        n2 = 11
+    elif symbol == 'IOSTUSDT':
+        n1 = 12
+        n2 = 11
+    elif symbol == 'IOTAUSDT':
         n1 = 20
+        n2 = 25
+    elif symbol == 'IOTXUSDT':
+        n1 = 16
         n2 = 19
-    elif symbol == 'KEYUSDT':
-        n1 = 19
-        n2 = 14
+    elif symbol == 'JSTUSDT':
+        n1 = 14
+        n2 = 16
+    elif symbol == 'KAVAUSDT':
+        n1 = 21
+        n2 = 21
+    elif symbol == 'KDAUSDT':
+        n1 = 10
+        n2 = 37
+    elif symbol == 'KLAYUSDT':
+        n1 = 12
+        n2 = 35
     elif symbol == 'KNCUSDT':
-        n1 = 24
-        n2 = 10
+        n1 = 34
+        n2 = 23
     elif symbol == 'KSMUSDT':
         n1 = 18
         n2 = 39
-    elif symbol == 'LINAUSDT':
-        n1 = 12
-        n2 = 29
     elif symbol == 'LINKUSDT':
-        n1 = 22
-        n2 = 39
-    elif symbol == 'LSKUSDT':
-        n1 = 12
-        n2 = 24
-    elif symbol == 'LTCUSDT':
+        n1 = 13
+        n2 = 16
+    elif symbol == 'LPTUSDT':
         n1 = 11
         n2 = 15
-    elif symbol == 'LTOUSDT':
+    elif symbol == 'LSKUSDT':
         n1 = 11
-        n2 = 10
-    elif symbol == 'LRCUSDT':
-        n1 = 28
-        n2 = 39
-    elif symbol == 'KLAYUSDT':
-        n1 = 11
-        n2 = 10
-    elif symbol == 'LUNAUSDT':
-        n1 = 29
-        n2 = 29
-    elif symbol == 'MANAUSDT':
-        n1 = 16
-        n2 = 11
-    elif symbol == 'MATICUSDT':
-        n1 = 25
-        n2 = 35
-    elif symbol == 'MINAUSDT':
-        n1 = 21
-        n2 = 20
-    elif symbol == 'MKRUSDT':
-        n1 = 15
-        n2 = 19
-    elif symbol == 'MTLUSDT':
-        n1 = 11
-        n2 = 20
-    elif symbol == 'NEARUSDT':
-        n1 = 38
-        n2 = 23
-    elif symbol == 'ONEUSDT':
-        n1 = 18
-        n2 = 37
-    elif symbol == 'ONGUSDT':
-        n1 = 35
-        n2 = 29
-    elif symbol == 'PERPUSDT':
-        n1 = 29
-        n2 = 26
-    elif symbol == 'QNTUSDT':
-        n1 = 15
         n2 = 12
-    elif symbol == 'RIFUSDT':
-        n1 = 15
-        n2 = 33
-    elif symbol == 'ROSEUSDT':
-        n1 = 18
+    elif symbol == 'LTCUSDT':
+        n1 = 13
+        n2 = 18
+    elif symbol == 'LRCUSDT':
+        n1 = 10
+        n2 = 22
+    elif symbol == 'MANAUSDT':
+        n1 = 11
+        n2 = 13
+    elif symbol == 'MASKUSDT':
+        n1 = 19
+        n2 = 25
+    elif symbol == 'MATICUSDT':
+        n1 = 21
         n2 = 38
-    elif symbol == 'RUNEUSDT':
+    elif symbol == 'MBOXUSDT':
+        n1 = 10
+        n2 = 30
+    elif symbol == 'MDXUSDT':
+        n1 = 11
+        n2 = 38
+    elif symbol == 'MINAUSDT':
+        n1 = 18
+        n2 = 12
+    elif symbol == 'MKRUSDT':
+        n1 = 11
+        n2 = 17
+    elif symbol == 'NEARUSDT':
+        n1 = 10
+        n2 = 31
+    elif symbol == 'NEOUSDT':
+        n1 = 11
+        n2 = 16
+    elif symbol == 'NMRUSDT':
+        n1 = 29
+        n2 = 10
+    elif symbol == 'OCEANUSDT':
+        n1 = 24
+        n2 = 28
+    elif symbol == 'OMGUSDT':
         n1 = 16
+        n2 = 30
+    elif symbol == 'ONEUSDT':
+        n1 = 19
+        n2 = 39
+    elif symbol == 'ONTUSDT':
+        n1 = 18
+        n2 = 16
+    elif symbol == 'PEOPLEUSDT':
+        n1 = 13
+        n2 = 30
+    elif symbol == 'PONDUSDT':
+        n1 = 10
+        n2 = 10
+    elif symbol == 'PUNDIXUSDT':
+        n1 = 10
+        n2 = 16
+    elif symbol == 'PYRUSDT':
+        n1 = 20
+        n2 = 35
+    elif symbol == 'QNTUSDT':
+        n1 = 14
+        n2 = 11
+    elif symbol == 'QTUMUSDT':
+        n1 = 10
+        n2 = 23
+    elif symbol == 'RADUSDT':
+        n1 = 16
+        n2 = 39
+    elif symbol == 'RENUSDT':
+        n1 = 13
+        n2 = 34
+    elif symbol == 'REQUSDT':
+        n1 = 11
+        n2 = 24
+    elif symbol == 'RLCUSDT':
+        n1 = 16
+        n2 = 13
+    elif symbol == 'RNDRUSDT':
+        n1 = 18
+        n2 = 36
+    elif symbol == 'ROSEUSDT':
+        n1 = 15
+        n2 = 13
+    elif symbol == 'RSRUSDT':
+        n1 = 11
+        n2 = 34
+    elif symbol == 'RUNEUSDT':
+        n1 = 12
+        n2 = 24
+    elif symbol == 'RVNUSDT':
+        n1 = 10
         n2 = 27
     elif symbol == 'SANDUSDT':
-        n1 = 36
-        n2 = 26
+        n1 = 10
+        n2 = 30
+    elif symbol == 'SFPUSDT':
+        n1 = 18
+        n2 = 28
     elif symbol == 'SHIBUSDT':
         n1 = 21
         n2 = 38
-    elif symbol == 'SNXUSDT':
+    elif symbol == 'SKLUSDT':
         n1 = 16
         n2 = 23
+    elif symbol == 'SNXUSDT':
+        n1 = 17
+        n2 = 38
     elif symbol == 'SOLUSDT':
         n1 = 12
-        n2 = 12
+        n2 = 37
     elif symbol == 'STXUSDT':
         n1 = 10
-        n2 = 17
-    elif symbol == 'TFUELUSDT':
-        n1 = 12
-        n2 = 11
-    elif symbol == 'THETAUSDT':
-        n1 = 17
-        n2 = 13
-    elif symbol == 'TRXUSDT':
-        n1 = 15
-        n2 = 39
-    elif symbol == 'UNIUSDT':
-        n1 = 25
-        n2 = 28
-    elif symbol == 'WAVESUSDT':
-        n1 = 13
-        n2 = 10
-    elif symbol == 'XECUSDT':
+        n2 = 34
+    elif symbol == 'SXPUSDT':
+        n1 = 29
+        n2 = 30
+    elif symbol == 'SYSUSDT':
         n1 = 19
+        n2 = 39
+    elif symbol == 'TFUELUSDT':
+        n1 = 10
+        n2 = 39
+    elif symbol == 'THETAUSDT':
+        n1 = 20
+        n2 = 26
+    elif symbol == 'TRXUSDT':
+        n1 = 10
+        n2 = 17
+    elif symbol == 'TWTUSDT':
+        n1 = 23
+        n2 = 16
+    elif symbol == 'UMAUSDT':
+        n1 = 24
+        n2 = 10
+    elif symbol == 'UNIUSDT':
+        n1 = 20
+        n2 = 27
+    elif symbol == 'VETUSDT':
+        n1 = 13
+        n2 = 15
+    elif symbol == 'VGXUSDT':
+        n1 = 13
+        n2 = 32
+    elif symbol == 'WAXPUSDT':
+        n1 = 10
+        n2 = 39
+    elif symbol == 'WINUSDT':
+        n1 = 13
+        n2 = 39
+    elif symbol == 'WOOUSDT':
+        n1 = 19
+        n2 = 24
+    elif symbol == 'WRXUSDT':
+        n1 = 12
+        n2 = 15
+    elif symbol == 'XECUSDT':
+        n1 = 14
         n2 = 37
     elif symbol == 'XEMUSDT':
-        n1 = 12
-        n2 = 23
+        n1 = 28
+        n2 = 30
     elif symbol == 'XLMUSDT':
-        n1 = 21
+        n1 = 18
         n2 = 18
     elif symbol == 'XMRUSDT':
-        n1 = 23
-        n2 = 13
+        n1 = 19
+        n2 = 25
+    elif symbol == 'XNOUSDT':
+        n1 = 16
+        n2 = 38
     elif symbol == 'XTZUSDT':
         n1 = 17
         n2 = 26
     elif symbol == 'XRPUSDT':
-        n1 = 13
-        n2 = 17
+        n1 = 12
+        n2 = 16
+    elif symbol == 'YFIUSDT':
+        n1 = 10
+        n2 = 16
     elif symbol == 'ZECUSDT':
-        n1 = 16
+        n1 = 19
         n2 = 28
-    elif symbol == 'ZILUSDT':
+    elif symbol == 'ZENUSDT':
         n1 = 16
         n2 = 38
+    elif symbol == 'ZILUSDT':
+        n1 = 17
+        n2 = 33
+    elif symbol == 'ZRXUSDT':
+        n1 = 12
+        n2 = 29
     else:
         n1 = 10
         n2 = 21
