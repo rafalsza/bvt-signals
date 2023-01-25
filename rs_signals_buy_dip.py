@@ -10,7 +10,7 @@ import pandas as pd
 from datetime import datetime
 import time
 from loguru import logger
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 from sklearn.linear_model import LinearRegression
 
 client = Client("", "")
@@ -544,7 +544,7 @@ def filter1(pair):
                 print(f'cmo: {cmo.iat[-2]}')
 
     elif CMO_1h and WAVETREND_1h and not MACD_1h:  # cmo=true,wavetrend=true,macd=false
-        if (cmo.iat[-1] < -35 and wt1.iat[-1] < -35 and df.Close[-1] < linear_lower[-1] and
+        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and df.Close[-1] < linear_lower[-1] and
             linear_regression[0] <= linear_regression[-1]) | (cmo.iat[-1] < -60 and
                                                         wt1.iat[-2] < -75 and
                                                         df.Close[-1] < linear_lower[-1]
@@ -556,16 +556,16 @@ def filter1(pair):
                 print(f'cmo: {cmo.iat[-2]}')
                 print(f'wt1: {wt1.iat[-2]}')
 
-            plt.figure(figsize=(8, 6))
-            plt.grid(True)
-            plt.plot(list(df.Close))
-            plt.title(label=f'{symbol}', color="green")
-            plt.plot(linear_regression, '--', color='r')
-            plt.plot(linear_upper, '--', color='r')
-            plt.plot(linear_lower, '--', color='green')
-            plt.show(block=False)
-            plt.pause(15)
-            plt.close()
+            # plt.figure(figsize=(8, 6))
+            # plt.grid(True)
+            # plt.plot(list(df.Close))
+            # plt.title(label=f'{symbol}', color="green")
+            # plt.plot(linear_regression, '--', color='r')
+            # plt.plot(linear_upper, '--', color='r')
+            # plt.plot(linear_lower, '--', color='green')
+            # plt.show(block=False)
+            # plt.pause(15)
+            # plt.close()
 
     elif CMO_1h and WAVETREND_1h and MACD_1h:  # cmo=true,wavetrend=true,macdh=true
         if (cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and macdh.iat[-1] > 0 and df.Close[-1] < linear_lower[-1] and
