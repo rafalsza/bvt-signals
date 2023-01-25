@@ -610,16 +610,13 @@ def filter1(pair):
                 print('found')
                 print("on 1h timeframe " + symbol)
                 print(f'macdh: {macdh.iat[-1]}')
-
     else:
         if (df.Close[-1] < linear_lower[-1] and linear_regression[0] <= linear_regression[-1]) | \
                 (df.Close[-1] < linear_lower[-1] and linear_regression[0] >= linear_regression[-1]):
             filtered_pairs1.append(symbol)
             print('found')
             print(f'on {interval} timeframe {symbol}')
-
     return filtered_pairs1
-
 
 def filter2(filtered_pairs1):
     interval = '15m'
@@ -773,5 +770,3 @@ def do_work():
             continue
         except KeyboardInterrupt as ki:
             continue
-
-do_work()
