@@ -7,7 +7,7 @@ import threading
 import os
 import pandas_ta as pta
 import pandas as pd
-from datetime import datetime
+# from datetime import datetime
 import time
 from loguru import logger
 # from matplotlib import pyplot as plt
@@ -40,7 +40,6 @@ filtered_pairs3 = []
 selected_pair = []
 
 def importdata(symbol, interval, limit):
-    client = Client()
     df = pd.DataFrame(
         client.get_historical_klines(symbol, interval, limit=limit)
     ).astype(float)
@@ -68,6 +67,14 @@ def regression_channel(data):
         linear_lower,
         linear_upper,
     )
+def wavetrend(df,n1,n2):
+    ap = pta.hlc3(df.High, df.Low, df.Close)
+    esa = pta.ema(ap, n1)
+    d = pta.ema(abs(ap - esa), n1)
+    ci = (ap - esa) / (0.015 * d)
+    wt1 = pta.ema(ci, n2)
+    wt2 = pta.sma(wt1, 4)
+    return wt1, wt2
 
 @logger.catch
 def filter1(pair):
@@ -525,15 +532,10 @@ def filter1(pair):
         n1 = 10
         n2 = 21
 
-    ap = pta.hlc3(df.High, df.Low, df.Close)
-    esa = pta.ema(ap, n1)
-    d = pta.ema(abs(ap - esa), n1)
-    ci = (ap - esa) / (0.015 * d)
-    wt1 = pta.ema(ci, n2)
-    wt2 = pta.sma(wt1, 4)
+    wt1,wt2 = wavetrend(df,n1,n2)
     cmo = pta.cmo(df.Close, talib=False)
     macdh = pta.macd(df.Close)['MACDh_12_26_9']
-    # print(f'{symbol} : {wt1.iat[-1]}')
+    # print(f'{symbol} : {wt1[-1]}')
 
     if CMO_1h and not WAVETREND_1h and not MACD_1h:  # cmo=true,wavetrend=false,macdh=false
         if (cmo[-1] < -60 and df.Close[-1] < ema_200[-1] and df.Close[-1] < linear_lower[-1] and linear_regression[0] <= linear_regression[-1]) | \
@@ -551,7 +553,7 @@ def filter1(pair):
                 print('found')
                 print("on 1h timeframe " + symbol)
                 print(f'cmo: {cmo.iat[-2]}')
-                print(f'wt1: {wt1.iat[-2]}')
+                print(f'wt1: {wt1[-2]}')
 
             # plt.figure(figsize=(8, 6))
             # plt.grid(True)
@@ -565,16 +567,16 @@ def filter1(pair):
             # plt.close()
 
     elif CMO_1h and WAVETREND_1h and MACD_1h:  # cmo=true,wavetrend=true,macdh=true
-        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and macdh.iat[-1] > 0 and df.Close[-1] < linear_lower[-1] and
+        if (cmo.iat[-1] < -60 and wt1[-1] < -75 and macdh.iat[-1] > 0 and df.Close[-1] < linear_lower[-1] and
             linear_regression[0] <= linear_regression[-1]) | (
-                cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and macdh.iat[-1] > 0 and df.Close[-1] < linear_lower[-1] and
+                cmo.iat[-1] < -60 and wt1[-1] < -75 and macdh.iat[-1] > 0 and df.Close[-1] < linear_lower[-1] and
                 linear_regression[0] <= linear_regression[-1]):
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
                 print("on 1h timeframe " + symbol)
                 print(f'cmo: {cmo.iat[-2]}')
-                print(f'wt1: {wt1.iat[-2]}')
+                print(f'wt1: {wt1[-2]}')
                 print(f'macdh: {macdh.iat[-2]}')
 
     elif WAVETREND_1h and not CMO_1h and not MACD_1h:  # cmo=false,wavetrend=true,macdh=false
@@ -618,22 +620,13 @@ def filter1(pair):
 def filter2(filtered_pairs1):
     interval = '15m'
     symbol = filtered_pairs1
-    klines = client.get_klines(symbol=symbol, interval=interval)
-    close = [float(entry[4]) for entry in klines]
+    df = importdata(symbol, interval, limit=500)
+    linear_regression, linear_lower, linear_upper = regression_channel(df)
 
-    x = close
-    y = range(len(x))
-
-    best_fit_line1 = np.poly1d(np.polyfit(y, x, 1))(y)
-    best_fit_line2 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 1.01
-    best_fit_line3 = (np.poly1d(np.polyfit(y, x, 1))(y)) * 0.99
-
-    if (x[-1] < best_fit_line3[-1] and best_fit_line1[0] < best_fit_line1[-1]) | \
-            (x[-1] < best_fit_line3[-1] and best_fit_line1[0] > best_fit_line1[-1]):
+    if df.Close[-1] < linear_lower[-1]:
         filtered_pairs2.append(symbol)
         if DEBUG:
             print("on 15min timeframe " + symbol)
-
     return filtered_pairs2
 
 
@@ -666,30 +659,17 @@ def filter3(filtered_pairs2):
 def momentum(filtered_pairs3):
     interval = '1m'
     symbol = filtered_pairs3
-
-    start_str = '12 hours ago UTC'
-    end_str = f'{datetime.now()}'
-    df = pd.DataFrame(client.get_historical_klines(symbol, interval, start_str, end_str)[:-1]).astype(float)
-    df = df.iloc[:, :6]
-    df.columns = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
-    df = df.set_index('timestamp')
-    df.index = pd.to_datetime(df.index, unit='ms')
+    df = importdata(symbol, interval, limit=1000)
     # CMO
     real = pta.cmo(df.close, talib=False)
     # WaveTrend
-    n1 = 10
-    n2 = 21
-    ap = pta.hlc3(df.high, df.low, df.close)
-    esa = pta.ema(ap, n1)
-    d = pta.ema(abs(ap - esa), n1)
-    ci = (ap - esa) / (0.015 * d)
-    wt1 = pta.ema(ci, n2)
+    wt1,wt2 = wavetrend(df,10,21)
     #
     print("on 1m timeframe " + symbol)
     print(f'cmo: {real.iat[-1]}')
-    print(f'wt1: {wt1.iat[-1]}')
+    print(f'wt1: {wt1[-1]}')
 
-    if real.iat[-1] < -50 and wt1.iat[-1] < -60:
+    if real.iat[-1] < -50 and wt1[-1] < -60:
         print('oversold dip found')
         selected_pair.append(symbol)
 
@@ -766,5 +746,5 @@ def do_work():
             print(f'{SIGNAL_NAME}: Exception do_work() 1: {e}')
             continue
         except KeyboardInterrupt as ki:
+            print(ki)
             continue
-do_work()
