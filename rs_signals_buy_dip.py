@@ -75,6 +75,7 @@ def filter1(pair):
     symbol = pair
     df = importdata(symbol, interval, limit=500)
     linear_regression,linear_lower,linear_upper = regression_channel(df)
+    ema_200 = pta.ema(df.Close,200)
 
     if symbol == 'BTCUSDT':
         n1 = 20
@@ -535,7 +536,7 @@ def filter1(pair):
     # print(f'{symbol} : {wt1.iat[-1]}')
 
     if CMO_1h and not WAVETREND_1h and not MACD_1h:  # cmo=true,wavetrend=false,macdh=false
-        if (cmo.iat[-1] < -60 and df.Close[-1] < linear_lower[-1] and linear_regression[0] <= linear_regression[-1]) | \
+        if (cmo[-1] < -60 and df.Close[-1] < ema_200[-1] and df.Close[-1] < linear_lower[-1] and linear_regression[0] <= linear_regression[-1]) | \
                 (cmo.iat[-1] < -60 and df.Close[-1] < linear_lower[-1] and linear_regression[0] >= linear_regression[-1]):
             filtered_pairs1.append(symbol)
             if DEBUG:
@@ -544,11 +545,7 @@ def filter1(pair):
                 print(f'cmo: {cmo.iat[-2]}')
 
     elif CMO_1h and WAVETREND_1h and not MACD_1h:  # cmo=true,wavetrend=true,macd=false
-        if (cmo.iat[-1] < -60 and wt1.iat[-1] < -75 and df.Close[-1] < linear_lower[-1] and
-            linear_regression[0] <= linear_regression[-1]) | (cmo.iat[-1] < -60 and
-                                                        wt1.iat[-2] < -75 and
-                                                        df.Close[-1] < linear_lower[-1]
-                                                        and linear_regression[0] >= linear_regression[-1]):
+        if cmo[-1] < -60 and wt1[-1] < -75 and df.Close[-1] < ema_200[-1] and df.Close[-1] <= linear_lower[-1]:
             filtered_pairs1.append(symbol)
             if DEBUG:
                 print('found')
@@ -770,3 +767,4 @@ def do_work():
             continue
         except KeyboardInterrupt as ki:
             continue
+do_work()
