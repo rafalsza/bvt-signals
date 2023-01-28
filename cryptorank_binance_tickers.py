@@ -1,5 +1,9 @@
 import requests
 from binance.client import Client
+import yaml
+
+# load yml file to dictionary
+keys = yaml.safe_load(open('./keys.yaml'))
 
 client = Client("", "")
 TICKERS = 'tickers_all_USDT.txt'
@@ -26,7 +30,7 @@ def get_binance():
 
 def get_cryptorank():
     url = 'https://api.cryptorank.io/v1/currencies'
-    payload = {'api_key': '8edf6971e9a994d4b66734db5bf2dfc6d32234537a2906d7a84c5b13318d', 'limit': 300}  # 148=100
+    payload = {'api_key': keys['cryptorank'], 'limit': 300}  # 148=100
     # 370=200
     req = requests.get(url, params=payload)
 
