@@ -30,7 +30,7 @@ def get_binance():
 
 def get_cryptorank():
     url = 'https://api.cryptorank.io/v1/currencies'
-    payload = {'api_key': keys['cryptorank'], 'limit': 300}  # 148=100
+    payload = {'api_key': keys['cryptorank']['api_key'], 'limit': 300}  # 148=100
     # 370=200
     req = requests.get(url, params=payload)
 
