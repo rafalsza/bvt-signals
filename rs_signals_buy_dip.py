@@ -16,7 +16,7 @@ from sklearn.linear_model import LinearRegression
 client = Client("", "")
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
 DEBUG = False
-TICKERS = 'tickers_all.txt'
+TICKERS = 'tickerlists/tickers_all_USDT.txt'
 SIGNAL_NAME = 'rs_signals_buy_dip'
 SIGNAL_FILE_BUY = 'signals/' + SIGNAL_NAME + '.buy'
 
