@@ -552,8 +552,8 @@ def filter1(pair):
             if DEBUG:
                 print('found')
                 print("on 1h timeframe " + symbol)
-                print(f'cmo: {cmo.iat[-2]}')
-                print(f'wt1: {wt1[-2]}')
+                print(f'cmo: {cmo.iat[-1]}')
+                print(f'wt1: {wt1[-1]}')
 
             # plt.figure(figsize=(8, 6))
             # plt.grid(True)
@@ -656,7 +656,7 @@ def momentum(filtered_pairs3):
     symbol = filtered_pairs3
     df = importdata(symbol, interval, limit=1000)
     # CMO
-    real = pta.cmo(df.close, talib=False)
+    real = pta.cmo(df.Close, talib=False)
     # WaveTrend
     wt1,wt2 = wavetrend(df,10,21)
     #
