@@ -6,7 +6,7 @@ import yaml
 keys = yaml.safe_load(open('./keys.yaml'))
 
 client = Client("", "")
-TICKERS = 'tickers_all_USDT.txt'
+TICKERS = 'tickerlists/tickers_all_USDT.txt'
 
 def get_binance():
     try:
