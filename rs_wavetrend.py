@@ -520,7 +520,7 @@ def filter1(pair):
     wt1, wt2 = wavetrend(df, n1, n2)
     ema_200 = pta.ema(df.Close, 200)
 
-    if wt1[-1] < -75 and df.Close[-1] < ema_200:
+    if wt1[-1] < -75 and df.Close[-1] < ema_200[-1]:
         filtered_pairs1.append(symbol)
         if DEBUG:
             print('found')
@@ -699,3 +699,5 @@ def do_work():
             continue
         except KeyboardInterrupt as ki:
             continue
+
+do_work()
