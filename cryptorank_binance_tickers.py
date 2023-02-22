@@ -3,7 +3,7 @@ from binance.client import Client
 import yaml
 
 # load yml file to dictionary
-keys = yaml.safe_load(open('./keys.yaml'))
+keys = yaml.safe_load(open('./config.yaml'))
 
 client = Client("", "")
 TICKERS = 'tickerlists/tickers_all_USDT.txt'
@@ -38,7 +38,7 @@ def get_cryptorank():
 
     li = [item.get('symbol') for item in dataj]
     ignore_usd = [x for x in li if not (x.endswith('USD') | x.startswith('USD'))]
-    list1 = ['WBTC', 'UST', 'USDD', 'DAI', 'STETH', 'CETH', 'GBP']
+    list1 = ['WBTC', 'UST', 'USDD', 'DAI', 'STETH', 'CETH', 'GBP','PAX']
     filtered = [x for x in ignore_usd if all(y not in x for y in list1)]
     filtered = [x + "USDT" for x in filtered]
     return filtered
