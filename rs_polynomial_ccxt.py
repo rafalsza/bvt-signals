@@ -1,6 +1,5 @@
 """
 Linear/Polynomial Regression Channel
-CUSTOM_LIST: False
 """
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
@@ -14,6 +13,7 @@ import pandas as pd
 import warnings
 import time
 from loguru import logger
+
 # from matplotlib import pyplot as plt
 
 warnings.filterwarnings("ignore")
@@ -45,9 +45,7 @@ selected_pair_sell = []
 
 
 def importdata(symbol, interval, limit):
-    df = pd.DataFrame(
-        client.fetch_ohlcv(symbol, timeframe=interval, limit=limit)
-    ).astype(float)
+    df = pd.DataFrame(client.fetch_ohlcv(symbol, timeframe=interval, limit=limit)).astype(float)
     df = df.iloc[:, :6]
     df.columns = ["timestamp", "Open", "High", "Low", "Close", "Volume"]
     df = df.set_index("timestamp")
@@ -158,17 +156,12 @@ def filter3(filtered_pairs2):
         linear_upper,
     ) = regression_channel(df)
 
-    if (
-        df.Close[-1] < linear_lower[-1]
-        and linear_regression[0] >= linear_regression[-1]
-    ):
+    if df.Close[-1] < linear_lower[-1] and linear_regression[0] >= linear_regression[-1]:
         filtered_pairs3.append(symbol)
         if DEBUG:
             print("on 5min timeframe " + symbol)
 
-    elif (
-        df.Close[-1] < linear_lower[-1] and linear_regression[0] < linear_regression[-1]
-    ):
+    elif df.Close[-1] < linear_lower[-1] and linear_regression[0] < linear_regression[-1]:
         filtered_pairs3.append(symbol)
         if DEBUG:
             print("on 5min timeframe " + symbol)
@@ -242,13 +235,9 @@ def analyze(trading_pairs):
             f.writelines(pair + "\n")
 
     if selected_pair_buy:
-        print(
-            f"{TxColors.BUY}{SIGNAL_NAME}: {selected_pair_buy} - Buy Signal Detected{TxColors.DEFAULT}"
-        )
+        print(f"{TxColors.BUY}{SIGNAL_NAME}: {selected_pair_buy} - Buy Signal Detected{TxColors.DEFAULT}")
     if selected_pair_sell:
-        print(
-            f"{TxColors.RED}{SIGNAL_NAME}: {selected_pair_sell} - Sell Signal Detected{TxColors.RED}"
-        )
+        print(f"{TxColors.RED}{SIGNAL_NAME}: {selected_pair_sell} - Sell Signal Detected{TxColors.RED}")
     else:
         print(f"{TxColors.DEFAULT}{SIGNAL_NAME}: - not enough signal to buy")
     return signal_coins, signal_coins_sell
@@ -288,4 +277,3 @@ def do_work():
             continue
         except KeyboardInterrupt as ki:
             continue
-do_work()
