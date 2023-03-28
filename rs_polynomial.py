@@ -1,6 +1,5 @@
 """
 Linear/Polynomial Regression Channel
-CUSTOM_LIST: False
 """
 from binance.client import Client
 from sklearn.linear_model import LinearRegression
@@ -19,7 +18,7 @@ warnings.filterwarnings("ignore")
 client = Client("", "")
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
 DEBUG = False
-TICKERS = "tickerlists/tickers_all_USDT.txt"
+TICKERS = "tickerlists/tickers_binance_USDT.txt"
 SIGNAL_NAME = "rs_signals_polynomial"
 SIGNAL_FILE_BUY = "signals/" + SIGNAL_NAME + ".buy"
 SIGNAL_FILE_SELL = "signals/" + SIGNAL_NAME + ".sell"
@@ -45,9 +44,7 @@ selected_pair_sell = []
 
 def importdata(symbol, interval, limit):
     client = Client()
-    df = pd.DataFrame(
-        client.get_historical_klines(symbol, interval, limit=limit)
-    ).astype(float)
+    df = pd.DataFrame(client.get_historical_klines(symbol, interval, limit=limit)).astype(float)
     df = df.iloc[:, :6]
     df.columns = ["timestamp", "Open", "High", "Low", "Close", "Volume"]
     df = df.set_index("timestamp")
@@ -135,17 +132,12 @@ def filter3(filtered_pairs2):
         linear_upper,
     ) = regression_channel(df)
 
-    if (
-        df.Close[-1] < linear_lower[-1]
-        and linear_regression[0] >= linear_regression[-1]
-    ):
+    if df.Close[-1] < linear_lower[-1] and linear_regression[0] >= linear_regression[-1]:
         filtered_pairs3.append(symbol)
         if DEBUG:
             print("on 5min timeframe " + symbol)
 
-    elif (
-        df.Close[-1] < linear_lower[-1] and linear_regression[0] < linear_regression[-1]
-    ):
+    elif df.Close[-1] < linear_lower[-1] and linear_regression[0] < linear_regression[-1]:
         filtered_pairs3.append(symbol)
         if DEBUG:
             print("on 5min timeframe " + symbol)
@@ -219,13 +211,9 @@ def analyze(trading_pairs):
             f.writelines(pair + "\n")
 
     if selected_pair_buy:
-        print(
-            f"{TxColors.BUY}{SIGNAL_NAME}: {selected_pair_buy} - Buy Signal Detected{TxColors.DEFAULT}"
-        )
+        print(f"{TxColors.BUY}{SIGNAL_NAME}: {selected_pair_buy} - Buy Signal Detected{TxColors.DEFAULT}")
     if selected_pair_sell:
-        print(
-            f"{TxColors.RED}{SIGNAL_NAME}: {selected_pair_sell} - Sell Signal Detected{TxColors.RED}"
-        )
+        print(f"{TxColors.RED}{SIGNAL_NAME}: {selected_pair_sell} - Sell Signal Detected{TxColors.RED}")
     else:
         print(f"{TxColors.DEFAULT}{SIGNAL_NAME}: - not enough signal to buy")
     return signal_coins, signal_coins_sell
