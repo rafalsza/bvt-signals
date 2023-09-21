@@ -7,6 +7,7 @@ import pandas as pd
 import warnings
 import time
 from loguru import logger
+from w_params import wavetrend_parameters
 
 warnings.filterwarnings("ignore")
 client = Client("", "")
@@ -42,7 +43,9 @@ selected_pair_sell = []
 
 
 def importdata(symbol, interval, limit):
-    df = pd.DataFrame(client.get_historical_klines(symbol, interval, limit=limit)).astype(float)
+    df = pd.DataFrame(
+        client.get_historical_klines(symbol, interval, limit=limit)
+    ).astype(float)
     df = df.iloc[:, :6]
     df.columns = ["timestamp", "Open", "High", "Low", "Close", "Volume"]
     df = df.set_index("timestamp")
@@ -66,470 +69,24 @@ def filter1(pair):
     symbol = pair
     df = importdata(symbol, interval, limit=500)
 
-    if symbol == "BTCUSDT":
-        n1 = 13
-        n2 = 16
-    elif symbol == "1INCHUSDT":
-        n1 = 26
-        n2 = 30
-    elif symbol == "AAVEUSDT":
-        n1 = 10
-        n2 = 12
-    elif symbol == "ACAUSDT":
-        n1 = 10
-        n2 = 32
-    elif symbol == "ADAUSDT":
-        n1 = 15
-        n2 = 31
-    elif symbol == "ALGOUSDT":
-        n1 = 10
-        n2 = 26
-    elif symbol == "ALPHAUSDT":
-        n1 = 10
-        n2 = 10
-    elif symbol == "AMPUSDT":
-        n1 = 10
-        n2 = 38
-    elif symbol == "ANKRUSDT":
-        n1 = 16
-        n2 = 22
-    elif symbol == "ANTUSDT":
-        n1 = 10
-        n2 = 16
-    elif symbol == "APEUSDT":
-        n1 = 23
-        n2 = 30
-    elif symbol == "API3USDT":
-        n1 = 23
-        n2 = 10
-    elif symbol == "APTUSDT":
-        n1 = 12
-        n2 = 29
-    elif symbol == "ARDRUSDT":
-        n1 = 11
-        n2 = 23
-    elif symbol == "ARUSDT":
-        n1 = 13
-        n2 = 13
-    elif symbol == "ASTRUSDT":
-        n1 = 12
-        n2 = 10
-    elif symbol == "ATOMUSDT":
-        n1 = 39
-        n2 = 24
-    elif symbol == "AUDIOUSDT":
-        n1 = 11
-        n2 = 16
-    elif symbol == "AVAXUSDT":
-        n1 = 12
-        n2 = 22
-    elif symbol == "AXSUSDT":
-        n1 = 12
-        n2 = 34
-    elif symbol == "BALUSDT":
-        n1 = 14
-        n2 = 19
-    elif symbol == "BANDUSDT":
-        n1 = 11
-        n2 = 38
-    elif symbol == "BATUSDT":
-        n1 = 10
-        n2 = 13
-    elif symbol == "BCHUSDT":
-        n1 = 10
-        n2 = 33
-    elif symbol == "BICOUSDT":
-        n1 = 10
-        n2 = 26
-    elif symbol == "BNBUSDT":
-        n1 = 11
-        n2 = 23
-    elif symbol == "BNXUSDT":
-        n1 = 10
-        n2 = 34
-    elif symbol == "BSWUSDT":
-        n1 = 11
-        n2 = 22
-    elif symbol == "CAKEUSDT":
-        n1 = 14
-        n2 = 32
-    elif symbol == "CELOUSDT":
-        n1 = 20
-        n2 = 38
-    elif symbol == "CELRUSDT":
-        n1 = 24
-        n2 = 18
-    elif symbol == "CHZUSDT":
-        n1 = 13
-        n2 = 16
-    elif symbol == "CHRUSDT":
-        n1 = 10
-        n2 = 39
-    elif symbol == "CKBUSDT":
-        n1 = 10
-        n2 = 10
-    elif symbol == "COMPUSDT":
-        n1 = 18
-        n2 = 14
-    elif symbol == "COTIUSDT":
-        n1 = 12
-        n2 = 17
-    elif symbol == "CRVUSDT":
-        n1 = 15
-        n2 = 27
-    elif symbol == "CTKUSDT":
-        n1 = 24
-        n2 = 10
-    elif symbol == "CTSIUSDT":
-        n1 = 14
-        n2 = 11
-    elif symbol == "CVXUSDT":
-        n1 = 10
-        n2 = 39
-    elif symbol == "DASHUSDT":
-        n1 = 11
-        n2 = 30
-    elif symbol == "DENTUSDT":
-        n1 = 19
-        n2 = 37
-    elif symbol == "DOGEUSDT":
-        n1 = 10
-        n2 = 36
-    elif symbol == "DOTUSDT":
-        n1 = 10
-        n2 = 20
-    elif symbol == "DYDXUSDT":
-        n1 = 32
-        n2 = 39
-    elif symbol == "DCRUSDT":
-        n1 = 17
-        n2 = 38
-    elif symbol == "DEXEUSDT":
-        n1 = 32
-        n2 = 13
-    elif symbol == "DGBUSDT":
-        n1 = 20
-        n2 = 23
-    elif symbol == "EGLDUSDT":
-        n1 = 10
-        n2 = 15
-    elif symbol == "ELFUSDT":
-        n1 = 24
-        n2 = 16
-    elif symbol == "ENJUSDT":
-        n1 = 10
-        n2 = 12
-    elif symbol == "ENSUSDT":
-        n1 = 10
-        n2 = 29
-    elif symbol == "EOSUSDT":
-        n1 = 10
-        n2 = 19
-    elif symbol == "ETCUSDT":
-        n1 = 10
-        n2 = 10
-    elif symbol == "ETHUSDT":
-        n1 = 10
-        n2 = 19
-    elif symbol == "FETUSDT":
-        n1 = 11
-        n2 = 15
-    elif symbol == "FILUSDT":
-        n1 = 11
-        n2 = 33
-    elif symbol == "FLOWUSDT":
-        n1 = 10
-        n2 = 28
-    elif symbol == "FLUXUSDT":
-        n1 = 12
-        n2 = 35
-    elif symbol == "FTMUSDT":
-        n1 = 17
-        n2 = 39
-    elif symbol == "FUNUSDT":
-        n1 = 11
-        n2 = 27
-    elif symbol == "FXSUSDT":
-        n1 = 11
-        n2 = 37
-    elif symbol == "GNOUSDT":
-        n1 = 11
-        n2 = 26
-    elif symbol == "GRTUSDT":
-        n1 = 15
-        n2 = 23
-    elif symbol == "GTCUSDT":
-        n1 = 21
-        n2 = 25
-    elif symbol == "HBARUSDT":
-        n1 = 16
-        n2 = 13
-    elif symbol == "HIVEUSDT":
-        n1 = 10
-        n2 = 16
-    elif symbol == "HOTUSDT":
-        n1 = 11
-        n2 = 21
-    elif symbol == "ICPUSDT":
-        n1 = 15
-        n2 = 23
-    elif symbol == "ICXUSDT":
-        n1 = 10
-        n2 = 27
-    elif symbol == "IMXUSDT":
-        n1 = 18
-        n2 = 32
-    elif symbol == "INJUSDT":
-        n1 = 14
-        n2 = 11
-    elif symbol == "IOSTUSDT":
-        n1 = 12
-        n2 = 11
-    elif symbol == "IOTAUSDT":
-        n1 = 20
-        n2 = 25
-    elif symbol == "IOTXUSDT":
-        n1 = 16
-        n2 = 19
-    elif symbol == "JSTUSDT":
-        n1 = 14
-        n2 = 16
-    elif symbol == "KAVAUSDT":
-        n1 = 21
-        n2 = 21
-    elif symbol == "KDAUSDT":
-        n1 = 10
-        n2 = 37
-    elif symbol == "KLAYUSDT":
-        n1 = 12
-        n2 = 35
-    elif symbol == "KNCUSDT":
-        n1 = 34
-        n2 = 23
-    elif symbol == "KSMUSDT":
-        n1 = 18
-        n2 = 39
-    elif symbol == "LINKUSDT":
-        n1 = 13
-        n2 = 16
-    elif symbol == "LPTUSDT":
-        n1 = 11
-        n2 = 15
-    elif symbol == "LSKUSDT":
-        n1 = 11
-        n2 = 12
-    elif symbol == "LTCUSDT":
-        n1 = 13
-        n2 = 18
-    elif symbol == "LRCUSDT":
-        n1 = 10
-        n2 = 22
-    elif symbol == "MANAUSDT":
-        n1 = 11
-        n2 = 13
-    elif symbol == "MASKUSDT":
-        n1 = 19
-        n2 = 25
-    elif symbol == "MATICUSDT":
-        n1 = 21
-        n2 = 38
-    elif symbol == "MBOXUSDT":
-        n1 = 10
-        n2 = 30
-    elif symbol == "MDXUSDT":
-        n1 = 11
-        n2 = 38
-    elif symbol == "MINAUSDT":
-        n1 = 18
-        n2 = 12
-    elif symbol == "MKRUSDT":
-        n1 = 11
-        n2 = 17
-    elif symbol == "NEARUSDT":
-        n1 = 10
-        n2 = 31
-    elif symbol == "NEOUSDT":
-        n1 = 11
-        n2 = 16
-    elif symbol == "NMRUSDT":
-        n1 = 29
-        n2 = 10
-    elif symbol == "OCEANUSDT":
-        n1 = 24
-        n2 = 28
-    elif symbol == "OMGUSDT":
-        n1 = 16
-        n2 = 30
-    elif symbol == "ONEUSDT":
-        n1 = 19
-        n2 = 39
-    elif symbol == "ONTUSDT":
-        n1 = 18
-        n2 = 16
-    elif symbol == "PEOPLEUSDT":
-        n1 = 13
-        n2 = 30
-    elif symbol == "PONDUSDT":
-        n1 = 10
-        n2 = 10
-    elif symbol == "PUNDIXUSDT":
-        n1 = 10
-        n2 = 16
-    elif symbol == "PYRUSDT":
-        n1 = 20
-        n2 = 35
-    elif symbol == "QNTUSDT":
-        n1 = 14
-        n2 = 11
-    elif symbol == "QTUMUSDT":
-        n1 = 10
-        n2 = 23
-    elif symbol == "RADUSDT":
-        n1 = 16
-        n2 = 39
-    elif symbol == "RENUSDT":
-        n1 = 13
-        n2 = 34
-    elif symbol == "REQUSDT":
-        n1 = 11
-        n2 = 24
-    elif symbol == "RLCUSDT":
-        n1 = 16
-        n2 = 13
-    elif symbol == "RNDRUSDT":
-        n1 = 18
-        n2 = 36
-    elif symbol == "ROSEUSDT":
-        n1 = 15
-        n2 = 13
-    elif symbol == "RSRUSDT":
-        n1 = 11
-        n2 = 34
-    elif symbol == "RUNEUSDT":
-        n1 = 12
-        n2 = 24
-    elif symbol == "RVNUSDT":
-        n1 = 10
-        n2 = 27
-    elif symbol == "SANDUSDT":
-        n1 = 10
-        n2 = 30
-    elif symbol == "SFPUSDT":
-        n1 = 18
-        n2 = 28
-    elif symbol == "SHIBUSDT":
-        n1 = 21
-        n2 = 38
-    elif symbol == "SKLUSDT":
-        n1 = 16
-        n2 = 23
-    elif symbol == "SNXUSDT":
-        n1 = 17
-        n2 = 38
-    elif symbol == "SOLUSDT":
-        n1 = 12
-        n2 = 37
-    elif symbol == "STXUSDT":
-        n1 = 10
-        n2 = 34
-    elif symbol == "SXPUSDT":
-        n1 = 29
-        n2 = 30
-    elif symbol == "SYSUSDT":
-        n1 = 19
-        n2 = 39
-    elif symbol == "TFUELUSDT":
-        n1 = 10
-        n2 = 39
-    elif symbol == "THETAUSDT":
-        n1 = 20
-        n2 = 26
-    elif symbol == "TRXUSDT":
-        n1 = 10
-        n2 = 17
-    elif symbol == "TWTUSDT":
-        n1 = 23
-        n2 = 16
-    elif symbol == "UMAUSDT":
-        n1 = 24
-        n2 = 10
-    elif symbol == "UNIUSDT":
-        n1 = 20
-        n2 = 27
-    elif symbol == "VETUSDT":
-        n1 = 13
-        n2 = 15
-    elif symbol == "VGXUSDT":
-        n1 = 13
-        n2 = 32
-    elif symbol == "WAXPUSDT":
-        n1 = 10
-        n2 = 39
-    elif symbol == "WINUSDT":
-        n1 = 13
-        n2 = 39
-    elif symbol == "WOOUSDT":
-        n1 = 19
-        n2 = 24
-    elif symbol == "WRXUSDT":
-        n1 = 12
-        n2 = 15
-    elif symbol == "XECUSDT":
-        n1 = 14
-        n2 = 37
-    elif symbol == "XEMUSDT":
-        n1 = 28
-        n2 = 30
-    elif symbol == "XLMUSDT":
-        n1 = 18
-        n2 = 18
-    elif symbol == "XMRUSDT":
-        n1 = 19
-        n2 = 25
-    elif symbol == "XNOUSDT":
-        n1 = 16
-        n2 = 38
-    elif symbol == "XTZUSDT":
-        n1 = 17
-        n2 = 26
-    elif symbol == "XRPUSDT":
-        n1 = 12
-        n2 = 16
-    elif symbol == "YFIUSDT":
-        n1 = 10
-        n2 = 16
-    elif symbol == "ZECUSDT":
-        n1 = 19
-        n2 = 28
-    elif symbol == "ZENUSDT":
-        n1 = 16
-        n2 = 38
-    elif symbol == "ZILUSDT":
-        n1 = 17
-        n2 = 33
-    elif symbol == "ZRXUSDT":
-        n1 = 12
-        n2 = 29
-    else:
-        n1 = 10
-        n2 = 21
+    n1, n2 = wavetrend_parameters.get(symbol, (10, 21))
 
     wt1, wt2 = wavetrend(df, n1, n2)
     ema_200 = pta.ema(df.Close, 200)
 
-    if wt1[-1] < -75 and df.Close[-1] < ema_200[-1]:
+    if wt1.iloc[-1] < -75 and df.Close[-1] < ema_200.iloc[-1]:
         filtered_pairs1.append(symbol)
         if DEBUG:
             print("found")
             print("on 1h timeframe " + symbol)
-            print(f"cmo: {wt1.iat[-1]}")
+            print(f"cmo: {wt1.iloc[-1]}")
 
-    if wt1.iat[-1] > 60:
+    if wt1.iloc[-1] > 60:
         selected_pair_sell.append(symbol)
         if DEBUG:
             print("found sell signal")
             print("on 1h timeframe " + symbol)
-            print(f"wt1: {wt1.iat[-1]}")
+            print(f"wt1: {wt1.iloc[-1]}")
 
     return filtered_pairs1, selected_pair_sell
 
@@ -598,10 +155,10 @@ def momentum(filtered_pairs3):
     wt1, wt2 = wavetrend(df, n1, n2)
     #
     print("on 1m timeframe " + symbol)
-    print(f"cmo: {real.iat[-1]}")
-    print(f"wt1: {wt1.iat[-1]}")
+    print(f"cmo: {real.iloc[-1]}")
+    print(f"wt1: {wt1.iloc[-1]}")
 
-    if real.iat[-1] < -50 and wt1.iat[-1] < -60:
+    if real.iloc[-1] < -50 and wt1.iloc[-1] < -60:
         print("oversold dip found")
         selected_pair_buy.append(symbol)
 
@@ -656,9 +213,13 @@ def analyze(trading_pairs):
             f.writelines(pair + "\n")
 
     if selected_pair_buy:
-        print(f"{TxColors.BUY}{SIGNAL_NAME}: {selected_pair_buy} - Buy Signal Detected{TxColors.DEFAULT}")
+        print(
+            f"{TxColors.BUY}{SIGNAL_NAME}: {selected_pair_buy} - Buy Signal Detected{TxColors.DEFAULT}"
+        )
     if selected_pair_sell:
-        print(f"{TxColors.RED}{SIGNAL_NAME}: {selected_pair_sell} - Sell Signal Detected{TxColors.RED}")
+        print(
+            f"{TxColors.RED}{SIGNAL_NAME}: {selected_pair_sell} - Sell Signal Detected{TxColors.RED}"
+        )
     else:
         print(f"{TxColors.DEFAULT}{SIGNAL_NAME}: - not enough signal to buy")
     return signal_coins, signal_coins_sell
@@ -681,7 +242,9 @@ def do_work():
             if not threading.main_thread().is_alive():
                 exit()
             print(f"{SIGNAL_NAME}: Analyzing {len(pairs)} coins")
-            print(f"CMO_1h: {CMO_1h} | WAVETREND_1h: {WAVETREND_1h} | MACD_1h: {MACD_1h}")
+            print(
+                f"CMO_1h: {CMO_1h} | WAVETREND_1h: {WAVETREND_1h} | MACD_1h: {MACD_1h}"
+            )
             signal_coins, signal_coins_sell = analyze(pairs)
             print(
                 f"{SIGNAL_NAME}: {len(signal_coins)} "
