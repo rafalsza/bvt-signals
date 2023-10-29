@@ -1,18 +1,19 @@
 """
 Linear/Polynomial Regression Channel
 """
-from binance.client import Client
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.pipeline import make_pipeline
-import numpy as np
-import threading
 import os
-import pandas_ta as pta
-import pandas as pd
-import warnings
+import threading
 import time
+import warnings
+
+import numpy as np
+import pandas as pd
+import pandas_ta as pta
+from binance.client import Client
 from loguru import logger
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
 
 warnings.filterwarnings("ignore")
 client = Client("", "")
@@ -36,7 +37,7 @@ class TxColors:
 
 
 filtered_pairs1 = []
-filtered_pairs3 = []
+filtered_pairs_5m = []
 filtered_pairs_1h_buy = []
 selected_pair_buy = []
 selected_pair_sell = []
@@ -44,7 +45,9 @@ selected_pair_sell = []
 
 def importdata(symbol, interval, limit):
     client = Client()
-    df = pd.DataFrame(client.get_historical_klines(symbol, interval, limit=limit)).astype(float)
+    df = pd.DataFrame(
+        client.get_historical_klines(symbol, interval, limit=limit)
+    ).astype(float)
     df = df.iloc[:, :6]
     df.columns = ["timestamp", "Open", "High", "Low", "Close", "Volume"]
     df = df.set_index("timestamp")
@@ -93,10 +96,11 @@ def regression_channel(data):
 
 
 @logger.catch
-def filter1(pair):
+def filter_1h(pair):
     interval = "1h"
     symbol = pair
     df = importdata(symbol, interval, limit=500)
+    ema_200 = pta.ema(df.Close, length=200)
 
     (
         polynomial_upper,
@@ -106,7 +110,10 @@ def filter1(pair):
         linear_upper,
     ) = regression_channel(df)
 
-    if df.Close[-1] < polynomial_lower[-1]:
+    if (
+        polynomial_lower[-1] > df.Close[-1] >= ema_200[-1]
+        and polynomial_lower[0] < polynomial_lower[-1]
+    ):
         filtered_pairs_1h_buy.append(symbol)
         if DEBUG:
             print("found buy signal")
@@ -120,9 +127,9 @@ def filter1(pair):
     return filtered_pairs_1h_buy, selected_pair_sell
 
 
-def filter3(filtered_pairs2):
+def filter_5m(coins):
     interval = "5m"
-    symbol = filtered_pairs2
+    symbol = coins
     df = importdata(symbol, interval, limit=500)
     (
         polynomial_upper,
@@ -132,22 +139,27 @@ def filter3(filtered_pairs2):
         linear_upper,
     ) = regression_channel(df)
 
-    if df.Close[-1] < linear_lower[-1] and linear_regression[0] >= linear_regression[-1]:
-        filtered_pairs3.append(symbol)
+    if (
+        df.Close[-1] < linear_lower[-1]
+        and linear_regression[0] >= linear_regression[-1]
+    ):
+        filtered_pairs_5m.append(symbol)
         if DEBUG:
-            print("on 5min timeframe " + symbol)
+            print("on 5m timeframe " + symbol)
 
-    elif df.Close[-1] < linear_lower[-1] and linear_regression[0] < linear_regression[-1]:
-        filtered_pairs3.append(symbol)
+    elif (
+        df.Close[-1] < linear_lower[-1] and linear_regression[0] < linear_regression[-1]
+    ):
+        filtered_pairs_5m.append(symbol)
         if DEBUG:
-            print("on 5min timeframe " + symbol)
+            print("on 5m timeframe " + symbol)
 
-    return filtered_pairs3
+    return filtered_pairs_5m
 
 
-def momentum(filtered_pairs3):
+def momentum(coins):
     interval = "1m"
-    symbol = filtered_pairs3
+    symbol = coins
     df = importdata(symbol, interval, limit=1000)
     # CMO
     cmo = pta.cmo(df.Close, talib=False)
@@ -172,10 +184,19 @@ def momentum(filtered_pairs3):
 
 
 def analyze(trading_pairs):
+    """
+    Analyze trading pairs and generate buy/sell signals.
+
+    Args:
+        trading_pairs (list): List of trading pair symbols.
+
+    Returns:
+        tuple: A tuple containing the trading pairs with buy signals and sell signals.
+    """
     signal_coins = {}
     signal_coins_sell = {}
     filtered_pairs_1h_buy.clear()
-    filtered_pairs3.clear()
+    filtered_pairs_5m.clear()
     selected_pair_buy.clear()
     selected_pair_sell.clear()
 
@@ -186,14 +207,14 @@ def analyze(trading_pairs):
         os.remove(SIGNAL_FILE_SELL)
 
     for i in trading_pairs:  # 1h
-        output = filter1(i)
+        output = filter_1h(i)
 
     for i in filtered_pairs_1h_buy:  # 5m
-        output = filter3(i)
+        output = filter_5m(i)
         if DEBUG:
             print(output)
 
-    for i in filtered_pairs3:  # 1m
+    for i in filtered_pairs_5m:  # 1m
         output = momentum(i)
         print(output)
 
@@ -211,15 +232,22 @@ def analyze(trading_pairs):
             f.writelines(pair + "\n")
 
     if selected_pair_buy:
-        print(f"{TxColors.BUY}{SIGNAL_NAME}: {selected_pair_buy} - Buy Signal Detected{TxColors.DEFAULT}")
+        print(
+            f"{TxColors.BUY}{SIGNAL_NAME}: {selected_pair_buy} - Buy Signal Detected{TxColors.DEFAULT}"
+        )
     if selected_pair_sell:
-        print(f"{TxColors.RED}{SIGNAL_NAME}: {selected_pair_sell} - Sell Signal Detected{TxColors.RED}")
+        print(
+            f"{TxColors.RED}{SIGNAL_NAME}: {selected_pair_sell} - Sell Signal Detected{TxColors.RED}"
+        )
     else:
         print(f"{TxColors.DEFAULT}{SIGNAL_NAME}: - not enough signal to buy")
     return signal_coins, signal_coins_sell
 
 
 def do_work():
+    """
+    Main function for performing the analysis.
+    """
     while True:
         try:
             if not os.path.exists(TICKERS):
