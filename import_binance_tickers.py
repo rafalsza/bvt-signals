@@ -24,7 +24,9 @@ def get_binance():
         li = [
             item.get("symbol")
             for item in dataj
-            if item["status"] == "TRADING" and item["quoteAsset"] == PAIRS_WITH and item["isSpotTradingAllowed"]
+            if item["status"] == "TRADING"
+            and item["quoteAsset"] == PAIRS_WITH
+            and item["isSpotTradingAllowed"]
         ]
         ignore = [
             "UP",
@@ -41,8 +43,11 @@ def get_binance():
             "STETH",
             "CETH",
             "PAX",
+            "WBETH",
         ]
-        filtered = [x for x in li if not (x.endswith("USD") | x.startswith(tuple(ignore)))]
+        filtered = [
+            x for x in li if not (x.endswith("USD") | x.startswith(tuple(ignore)))
+        ]
 
         # filtered = [sub[: -4] for sub in symbols]   # without USDT
 
