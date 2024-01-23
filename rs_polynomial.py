@@ -1,19 +1,21 @@
 """
 Linear/Polynomial Regression Channel
 """
-import os
-import threading
-import time
-import warnings
 
-import numpy as np
-import pandas as pd
-import pandas_ta as pta
 from binance.client import Client
-from loguru import logger
 from sklearn.linear_model import LinearRegression
-from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
+import numpy as np
+import threading
+import os
+import pandas_ta as pta
+import pandas as pd
+import warnings
+import time
+import signal
+import sys
+from loguru import logger
 
 warnings.filterwarnings("ignore")
 client = Client("", "")
@@ -245,9 +247,12 @@ def analyze(trading_pairs):
 
 
 def do_work():
-    """
-    Main function for performing the analysis.
-    """
+    def handle_signals(signum, frame):
+        print(f"Received signal {signum}, exiting gracefully.")
+        sys.exit(0)
+
+    # Attach the signal handler
+    signal.signal(signal.SIGTERM, handle_signals)
     while True:
         try:
             if not os.path.exists(TICKERS):
