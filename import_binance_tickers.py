@@ -31,18 +31,18 @@ def get_binance():
         ignore = [
             "UP",
             "DOWN",
-            "BEAR",
-            "BULL",
             "USD",
-            "BUSD",
+            "AEUR",
             "EUR",
             "DAI",
+            "BUSD",
             "TUSD",
+            "FDUSD",
             "GBP",
             "WBTC",
-            "STETH",
-            "CETH",
             "PAX",
+            "USTC",
+            "1000SATS",
             "WBETH",
         ]
         filtered = [
