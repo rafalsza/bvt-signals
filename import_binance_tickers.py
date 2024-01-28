@@ -42,7 +42,6 @@ def get_binance():
             "WBTC",
             "PAX",
             "USTC",
-            "1000SATS",
             "WBETH",
         ]
         filtered = [
