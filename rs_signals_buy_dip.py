@@ -89,9 +89,7 @@ def filter1(pair):
     cmo = pta.cmo(df.close, talib=False)
     macdh = pta.macd(df.close)["MACDh_12_26_9"]
 
-    if (
-        CMO_1h and not WAVETREND_1h and not MACD_1h
-    ):
+    if CMO_1h and not WAVETREND_1h and not MACD_1h:
         if (
             cmo.iloc[-1] < -60
             and df.close[-1] < ema_200.iloc[-1]
@@ -155,9 +153,7 @@ def filter1(pair):
                 print(f"wt1: {wt1.iloc[-2]}")
                 print(f"macdh: {macdh.iat[-2]}")
 
-    elif (
-        WAVETREND_1h and not CMO_1h and not MACD_1h
-    ):
+    elif WAVETREND_1h and not CMO_1h and not MACD_1h:
         if (
             wt1.iat[-1] < -75
             and df.close[-1] < linear_lower[-1]
