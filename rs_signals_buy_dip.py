@@ -1,12 +1,14 @@
-from binance.client import Client
-import numpy as np
-import threading
 import os
-import pandas_ta as pta
-import pandas as pd
+import threading
 
 # from datetime import datetime
 import time
+
+import numpy as np
+import pandas as pd
+import pandas_ta as pta
+from finta import TA
+from binance.client import Client
 from loguru import logger
 
 # from matplotlib import pyplot as plt
@@ -46,7 +48,7 @@ def importdata(symbol, interval, limit):
         client.get_historical_klines(symbol, interval, limit=limit)
     ).astype(float)
     df = df.iloc[:, :6]
-    df.columns = ["timestamp", "Open", "High", "Low", "Close", "Volume"]
+    df.columns = ["timestamp", "open", "high", "Low", "close", "Volume"]
     df = df.set_index("timestamp")
     df.index = pd.to_datetime(df.index, unit="ms")
     return df
@@ -54,7 +56,7 @@ def importdata(symbol, interval, limit):
 
 def regression_channel(data):
     # Create the linear regression channel
-    y = data["Close"].values
+    y = data["close"].values
     X = range(len(y))
     X = np.array(X).reshape(-1, 1)  # Reshape X to be a 2D array
     model = LinearRegression()
@@ -73,42 +75,31 @@ def regression_channel(data):
     )
 
 
-def wavetrend(df, n1, n2):
-    ap = pta.hlc3(df.High, df.Low, df.Close)
-    esa = pta.ema(ap, n1)
-    d = pta.ema(abs(ap - esa), n1)
-    ci = (ap - esa) / (0.015 * d)
-    wt1 = pta.ema(ci, n2)
-    wt2 = pta.sma(wt1, 4)
-    return wt1, wt2
-
-
 @logger.catch
 def filter1(pair):
     interval = "1h"
     symbol = pair
     df = importdata(symbol, interval, limit=500)
     linear_regression, linear_lower, linear_upper = regression_channel(df)
-    ema_200 = pta.ema(df.Close, 200)
+    ema_200 = pta.ema(df.close, 200)
 
     n1, n2 = wavetrend_parameters.get(symbol, (10, 21))
 
-    wt1, wt2 = wavetrend(df, n1, n2)
-    cmo = pta.cmo(df.Close, talib=False)
-    macdh = pta.macd(df.Close)["MACDh_12_26_9"]
-    # print(f'{symbol} : {wt1[-1]}')
+    wt1 = TA.WTO(df, n1, n2)["WT1."]
+    cmo = pta.cmo(df.close, talib=False)
+    macdh = pta.macd(df.close)["MACDh_12_26_9"]
 
     if (
         CMO_1h and not WAVETREND_1h and not MACD_1h
-    ):  # cmo=true,wavetrend=false,macdh=false
+    ):
         if (
             cmo.iloc[-1] < -60
-            and df.Close[-1] < ema_200.iloc[-1]
-            and df.Close[-1] < linear_lower[-1]
+            and df.close[-1] < ema_200.iloc[-1]
+            and df.close[-1] < linear_lower[-1]
             and linear_regression[0] <= linear_regression[-1]
         ) | (
             cmo.iloc[-1] < -60
-            and df.Close[-1] < linear_lower.iloc[-1]
+            and df.close[-1] < linear_lower.iloc[-1]
             and linear_regression[0] >= linear_regression[-1]
         ):
             filtered_pairs1.append(symbol)
@@ -121,8 +112,8 @@ def filter1(pair):
         if (
             cmo.iloc[-1] < -60
             and wt1.iloc[-1] < -75
-            and df.Close.iloc[-1] < ema_200.iloc[-1]
-            and df.Close.iloc[-1] <= linear_lower[-1]
+            and df.close.iloc[-1] < ema_200.iloc[-1]
+            and df.close.iloc[-1] <= linear_lower[-1]
         ):
             filtered_pairs1.append(symbol)
             if DEBUG:
@@ -133,7 +124,7 @@ def filter1(pair):
 
             # plt.figure(figsize=(8, 6))
             # plt.grid(True)
-            # plt.plot(list(df.Close))
+            # plt.plot(list(df.close))
             # plt.title(label=f'{symbol}', color="green")
             # plt.plot(linear_regression, '--', color='r')
             # plt.plot(linear_upper, '--', color='r')
@@ -147,13 +138,13 @@ def filter1(pair):
             cmo.iloc[-1] < -60
             and wt1.iloc[-1] < -75
             and macdh.iloc[-1] > 0
-            and df.Close.iloc[-1] < linear_lower[-1]
+            and df.close.iloc[-1] < linear_lower[-1]
             and linear_regression[0] <= linear_regression[-1]
         ) | (
             cmo.iat[-1] < -60
             and wt1.iloc[-1] < -75
             and macdh.iat[-1] > 0
-            and df.Close.iloc[-1] < linear_lower[-1]
+            and df.close.iloc[-1] < linear_lower[-1]
             and linear_regression[0] <= linear_regression[-1]
         ):
             filtered_pairs1.append(symbol)
@@ -166,14 +157,14 @@ def filter1(pair):
 
     elif (
         WAVETREND_1h and not CMO_1h and not MACD_1h
-    ):  # cmo=false,wavetrend=true,macdh=false
+    ):
         if (
             wt1.iat[-1] < -75
-            and df.Close[-1] < linear_lower[-1]
+            and df.close[-1] < linear_lower[-1]
             and linear_regression[0] <= linear_regression[-1]
         ) | (
             wt1.iat[-1] < -75
-            and df.Close[-1] < linear_lower[-1]
+            and df.close[-1] < linear_lower[-1]
             and linear_regression[0] >= linear_regression[-1]
         ):
             filtered_pairs1.append(symbol)
@@ -186,12 +177,12 @@ def filter1(pair):
         if (
             cmo.iat[-1] < -60
             and macdh.iat[-1] > 0
-            and df.Close[-1] < linear_lower[-1]
+            and df.close[-1] < linear_lower[-1]
             and linear_regression[0] <= linear_regression[-1]
         ) | (
             cmo.iat[-1] < -60
             and macdh.iat[-1] > 0
-            and df.Close[-1] < linear_lower[-1]
+            and df.close[-1] < linear_lower[-1]
             and linear_regression[0] > linear_regression[-1]
         ):
             filtered_pairs1.append(symbol)
@@ -206,11 +197,11 @@ def filter1(pair):
     ):  # cmo=false,wavetrend=false,macdh=true
         if (
             macdh.iloc[-1] > 0
-            and df.Close[-1] < linear_lower[-1]
+            and df.close[-1] < linear_lower[-1]
             and linear_regression[0] <= linear_regression[-1]
         ) | (
             macdh.iloc[-1] > 0
-            and df.Close[-1] < linear_lower[-1]
+            and df.close[-1] < linear_lower[-1]
             and linear_regression[0] > linear_regression[-1]
         ):
             filtered_pairs1.append(symbol)
@@ -228,7 +219,7 @@ def filter2(filtered_pairs1):
     df = importdata(symbol, interval, limit=500)
     linear_regression, linear_lower, linear_upper = regression_channel(df)
 
-    if df.Close.iloc[-1] < linear_lower[-1]:
+    if df.close.iloc[-1] < linear_lower[-1]:
         filtered_pairs2.append(symbol)
         if DEBUG:
             print("on 15min timeframe " + symbol)
@@ -266,9 +257,9 @@ def momentum(filtered_pairs3):
     symbol = filtered_pairs3
     df = importdata(symbol, interval, limit=1000)
     # CMO
-    real = pta.cmo(df.Close, talib=False)
+    real = pta.cmo(df.close, talib=False)
     # WaveTrend
-    wt1, wt2 = wavetrend(df, 10, 21)
+    wt1 = TA.WTO(df)["WT1."]
     #
     print("on 1m timeframe " + symbol)
     print(f"cmo: {real.iloc[-1]}")
